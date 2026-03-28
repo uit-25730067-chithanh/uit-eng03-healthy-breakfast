@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Importance of Having a Healthy Breakfast</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #0891B2;
+            --secondary: #F97316;
+            --dark: #0f172a;
+            --light: #F8FAFC;
+            --text-dark: #1e293b;
+            --text-light: #f1f5f9;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-dark: #f1f5f9;
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: #e2e8f0;
+            color: var(--text-dark);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            transition: background-color 0.3s ease;
+        }
+
+        [data-theme="dark"] body { background-color: #020617; }
+
+        h1, h2, h3 { font-family: 'Poppins', sans-serif; }
+
+        /* Presentation Canvas (16:9 Aspect Ratio) */
+        .presentation-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 1280px;
+            aspect-ratio: 16 / 9;
+            background: var(--light);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: flex;
+            cursor: pointer; /* Indicates it's clickable */
+        }
+
+        [data-theme="dark"] .presentation-wrapper { background: var(--dark); }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            transform: scale(0.95);
+            display: flex;
+            flex-direction: column;
+            z-index: 1;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+            z-index: 10;
+        }
+
+        /* Gradual Reveal Animation */
+        .reveal-item {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .reveal-item.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Layouts */
+        .full-bg {
+            background-size: cover;
+            background-position: center;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .full-bg::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); z-index: 0;
+        }
+        .full-bg > * { z-index: 1; }
+
+        .split-layout {
+            display: flex;
+            flex-direction: row;
+            height: 100%;
+        }
+        .split-content {
+            flex: 1;
+            padding: 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .split-image {
+            flex: 1;
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Components */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            padding: 3rem;
+            border-radius: 24px;
+            max-width: 800px;
+            box-shadow: var(--shadow);
+        }
+
+        .title-text {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle-text { font-size: 1.5rem; opacity: 0.9; }
+
+        .section-title {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            font-size: 1.25rem;
+            background: var(--glass-bg);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .list-item i { color: var(--secondary); margin-top: 4px; width: 32px; height: 32px; flex-shrink: 0; }
+        .list-item h4 { font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-dark); }
+        .list-item p { opacity: 0.8; line-height: 1.5; }
+
+        /* Team Grid */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            padding: 0 4rem;
+            margin-top: 2rem;
+        }
+        .team-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        .team-card img {
+            width: 150px; height: 150px; border-radius: 50%; object-fit: cover;
+            margin-bottom: 1.5rem; border: 4px solid var(--primary);
+        }
+        .team-card h3 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .team-card p { color: var(--secondary); font-weight: 600; }
+
+        /* Controls UI */
+        .controls-overlay {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 1rem;
+            border-radius: 99px;
+            border: 1px solid var(--glass-border);
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+        .btn {
+            background: transparent; border: none; color: var(--text-dark);
+            cursor: pointer; width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .btn:hover { background: rgba(8, 145, 178, 0.1); color: var(--primary); }
+        .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .counter { font-family: monospace; font-weight: 600; font-size: 1.1rem; min-width: 60px; text-align: center; }
+        
+        .theme-toggle {
+            position: absolute; top: 2rem; right: 2rem; z-index: 100;
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            color: var(--text-dark); width: 48px; height: 48px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: var(--shadow); transition: transform 0.2s;
+        }
+        .theme-toggle:hover { transform: scale(1.1); }
+
+        .progress-bar {
+            position: absolute; top: 0; left: 0; height: 6px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            width: 0%; transition: width 0.3s ease; z-index: 100;
+        }
+
+        .click-hint {
+            position: absolute; bottom: 6rem; right: 2rem;
+            background: var(--glass-bg); padding: 0.5rem 1rem; border-radius: 8px;
+            font-size: 0.9rem; opacity: 0.7; z-index: 100; pointer-events: none;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 0.8; } 100% { opacity: 0.4; } }
+
+        @media (max-width: 1024px) {
+            .presentation-wrapper { aspect-ratio: auto; height: 100vh; border-radius: 0; }
+            .split-layout { flex-direction: column; }
+            .split-image { height: 30vh; flex: none; }
+            .split-content { padding: 2rem; }
+            .team-grid { grid-template-columns: 1fr; padding: 0 2rem; overflow-y: auto; }
+            .title-text { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="presentation-wrapper" id="presentation" onclick="nextAction()">
+        <div class="progress-bar" id="progressBar"></div>
+        
+        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme(event)" aria-label="Toggle Theme">
+            <i data-lucide="moon"></i>
+        </button>
+
+        <div class="click-hint"><i data-lucide="mouse-pointer-click" style="width:16px; height:16px; display:inline-block; vertical-align:middle;"></i> Click to advance</div>
+
+        <!-- Slide 1: Title -->
+        <div class="slide active full-bg" style="background-image: url('https://images.unsplash.com/photo-1493770348161-369560ae357d?auto=format&fit=crop&w=1920&q=80');">
+            <div class="glass-card reveal-item">
+                <div style="display: inline-block; padding: 0.5rem 1rem; background: rgba(8, 145, 178, 0.1); color: var(--primary); border-radius: 99px; font-weight: 600; margin-bottom: 1rem;">
+                    Team 04 Presentation
+                </div>
+                <h1 class="title-text">The Importance of a Healthy Breakfast</h1>
+                <p class="subtitle-text">Fueling Your Body and Mind for Success</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Team -->
+        <div class="slide" style="padding-top: 4rem;">
+            <h2 class="section-title" style="justify-content: center;"><i data-lucide="users"></i> Meet the Team</h2>
+            <div class="team-grid">
+                <div class="team-card reveal-item">
+                    <img src="https://i.pravatar.cc/150?img=47" alt="Alice">
+                    <h3>Alice Johnson</h3>
+                    <p>Lead Researcher</p>
+                </div>
+                <div class="team-card reveal-item">
+                    <img src="https://i.pravatar.cc/150?img=11" alt="Bob">
+                    <h3>Bob Smith</h3>
+                    <p>UI/UX Designer</p>
+                </div>
+                <div class="team-card reveal-item">
+                    <img src="https://i.pravatar.cc/150?img=33" alt="Charlie">
+                    <h3>Charlie Davis</h3>
+                    <p>Presenter</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Introduction -->
+        <div class="slide split-layout">
+            <div class="split-content">
+                <h2 class="section-title"><i data-lucide="sun"></i> Introduction</h2>
+                <p style="font-size: 1.25rem; margin-bottom: 2rem; opacity: 0.9;">Good morning! Breakfast literally means "breaking the fast" of the night. Here is why it's the day's engine:</p>
+                
+                <div class="list-item reveal-item">
+                    <i data-lucide="battery-charging"></i>
+                    <div>
+                        <h4>Kickstarts Metabolism</h4>
+                        <p>It signals to your body that it's time to start burning calories for the day.</p>
+                    </div>
+                </div>
+                <div class="list-item reveal-item">
+                    <i data-lucide="zap"></i>
+                    <div>
+                        <h4>Replenishes Glucose</h4>
+                        <p>Restores your blood sugar levels, providing immediate energy to your brain and muscles.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="split-image" style="background-image: url('https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?auto=format&fit=crop&w=800&q=80');"></div>
+        </div>
+
+        <!-- Slide 4: Health Benefits -->
+        <div class="slide split-layout">
+            <div class="split-image" style="background-image: url('https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?auto=format&fit=crop&w=800&q=80');"></div>
+            <div class="split-content">
+                <h2 class="section-title"><i data-lucide="heart-pulse"></i> Health Benefits</h2>
+                
+                <div class="list-item reveal-item">
+                    <i data-lucide="scale"></i>
+                    <div>
+                        <h4>Weight Management</h4>
+                        <p>Reduces hunger later in the day, preventing overeating and cravings.</p>
+                    </div>
+                </div>
+                <div class="list-item reveal-item">
+                    <i data-lucide="activity"></i>
+                    <div>
+                        <h4>Steady Energy</h4>
+                        <p>Maintains stable blood sugar levels, avoiding mid-morning crashes.</p>
+                    </div>
+                </div>
+                <div class="list-item reveal-item">
+                    <i data-lucide="shield-check"></i>
+                    <div>
+                        <h4>Immune Support</h4>
+                        <p>A balanced breakfast provides essential vitamins that strengthen immunity.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Mental & Physical -->
+        <div class="slide split-layout">
+            <div class="split-content">
+                <h2 class="section-title"><i class="lucide" data-lucide="brain"></i> Mental & Physical</h2>
+                
+                <div class="list-item reveal-item">
+                    <i data-lucide="target"></i>
+                    <div>
+                        <h4>Enhanced Focus</h4>
+                        <p>Improves concentration, problem-solving skills, and productivity at work or school.</p>
+                    </div>
+                </div>
+                <div class="list-item reveal-item">
+                    <i data-lucide="lightbulb"></i>
+                    <div>
+                        <h4>Better Memory</h4>
+                        <p>Provides the brain with the nutrients needed for cognitive retention.</p>
+                    </div>
+                </div>
+                <div class="list-item reveal-item">
+                    <i data-lucide="dumbbell"></i>
+                    <div>
+                        <h4>Physical Endurance</h4>
+                        <p>Restores glycogen levels, essential for physical activity and stamina.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="split-image" style="background-image: url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80');"></div>
+        </div>
+
+        <!-- Slide 6: Consequences -->
+        <div class="slide split-layout">
+            <div class="split-image" style="background-image: url('https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?auto=format&fit=crop&w=800&q=80');"></div>
+            <div class="split-content">
+                <h2 class="section-title" style="color: #ef4444;"><i data-lucide="alert-triangle"></i> The Cost of Skipping</h2>
+                
+                <div class="list-item reveal-item" style="border-left: 4px solid #ef4444;">
+                    <i data-lucide="battery-warning" style="color: #ef4444;"></i>
+                    <div>
+                        <h4>Fatigue & Lethargy</h4>
+                        <p>Running on empty leaves you feeling drained before noon.</p>
+                    </div>
+                </div>
+                <div class="list-item reveal-item" style="border-left: 4px solid #ef4444;">
+                    <i data-lucide="frown" style="color: #ef4444;"></i>
+                    <div>
+                        <h4>Mood Swings</h4>
+                        <p>Low blood sugar can cause irritability and increased stress levels.</p>
+                    </div>
+                </div>
+                <div class="list-item reveal-item" style="border-left: 4px solid #ef4444;">
+                    <i data-lucide="trending-down" style="color: #ef4444;"></i>
+                    <div>
+                        <h4>Nutrient Deficiencies</h4>
+                        <p>Missing out on essential vitamins that are hard to make up later in the day.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Tips -->
+        <div class="slide split-layout">
+            <div class="split-content">
+                <h2 class="section-title"><i data-lucide="check-circle"></i> Tips for Success</h2>
+                
+                <div class="list-item reveal-item">
+                    <i data-lucide="egg"></i>
+                    <div>
+                        <h4>Include Protein</h4>
+                        <p>Eggs, Greek yogurt, or nuts keep you full longer.</p>
+                    </div>
+                </div>
+                <div class="list-item reveal-item">
+                    <i data-lucide="wheat"></i>
+                    <div>
+                        <h4>Choose Whole Grains</h4>
+                        <p>Oatmeal or whole-wheat toast provide sustained energy.</p>
+                    </div>
+                </div>
+                <div class="list-item reveal-item">
+                    <i data-lucide="apple"></i>
+                    <div>
+                        <h4>Add Fruits or Veggies</h4>
+                        <p>Berries, bananas, or spinach add crucial vitamins and fiber.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="split-image" style="background-image: url('https://images.unsplash.com/photo-1482049016688-2d3e1b311543?auto=format&fit=crop&w=800&q=80');"></div>
+        </div>
+
+        <!-- Slide 8: Conclusion -->
+        <div class="slide full-bg" style="background-image: url('https://images.unsplash.com/photo-1506084868230-bb9d95c24759?auto=format&fit=crop&w=1920&q=80');">
+            <div class="glass-card reveal-item" style="text-align: center;">
+                <i data-lucide="award" style="width: 64px; height: 64px; color: var(--secondary); margin-bottom: 1rem;"></i>
+                <h2 class="title-text" style="font-size: 3rem;">Conclusion</h2>
+                <p style="font-size: 1.5rem; margin-bottom: 2rem; line-height: 1.6;">
+                    A healthy breakfast is an investment in your well-being, setting the tone for a productive, energetic day.
+                </p>
+                <div class="reveal-item" style="padding: 1.5rem; background: rgba(249, 115, 22, 0.1); border: 2px dashed var(--secondary); border-radius: 16px; display: inline-block;">
+                    <h3 style="font-size: 1.5rem; color: var(--secondary); margin-bottom: 0.5rem;">Call to Action</h3>
+                    <p style="font-size: 2rem; font-weight: 800; margin: 0; color: var(--text-dark);">Make breakfast a daily habit!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls-overlay" onclick="event.stopPropagation()">
+            <button class="btn" id="prevBtn" onclick="prevAction()" aria-label="Previous">
+                <i data-lucide="chevron-left"></i>
+            </button>
+            <div class="counter" id="counter">1 / 8</div>
+            <button class="btn" id="nextBtn" onclick="nextAction()" aria-label="Next">
+                <i data-lucide="chevron-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const counter = document.getElementById('counter');
+        const progressBar = document.getElementById('progressBar');
+        const themeToggle = document.getElementById('themeToggle');
+
+        function initFromHash() {
+            const hash = window.location.hash;
+            if (hash && hash.startsWith('#slide-')) {
+                const index = parseInt(hash.replace('#slide-', '')) - 1;
+                if (index >= 0 && index < totalSlides) {
+                    currentSlide = index;
+                }
+            }
+            updateUI(true); // true means jump directly, reveal all items
+        }
+
+        function updateUI(revealAll = false) {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active');
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                    
+                    // Handle reveals based on navigation direction
+                    const reveals = slide.querySelectorAll('.reveal-item');
+                    if (revealAll) {
+                        reveals.forEach(r => r.classList.add('revealed'));
+                    } else {
+                        // If moving forward normally, hide all reveals initially
+                        reveals.forEach(r => r.classList.remove('revealed'));
+                        // Auto-reveal the first item if it exists
+                        if(reveals.length > 0) {
+                            setTimeout(() => reveals[0].classList.add('revealed'), 300);
+                        }
+                    }
+                }
+            });
+
+            counter.textContent = `${currentSlide + 1} / ${totalSlides}`;
+            progressBar.style.width = `${((currentSlide + 1) / totalSlides) * 100}%`;
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === totalSlides - 1;
+            window.history.replaceState(null, null, `#slide-${currentSlide + 1}`);
+        }
+
+        function nextAction() {
+            const currentSlideEl = slides[currentSlide];
+            const unrevealed = currentSlideEl.querySelectorAll('.reveal-item:not(.revealed)');
+            
+            if (unrevealed.length > 0) {
+                // Reveal next item
+                unrevealed[0].classList.add('revealed');
+            } else if (currentSlide < totalSlides - 1) {
+                // Go to next slide
+                currentSlide++;
+                updateUI(false);
+            }
+        }
+
+        function prevAction() {
+            const currentSlideEl = slides[currentSlide];
+            const revealed = currentSlideEl.querySelectorAll('.reveal-item.revealed');
+            
+            // Keep at least one item revealed if we are just stepping back animations
+            if (revealed.length > 1) {
+                revealed[revealed.length - 1].classList.remove('revealed');
+            } else if (currentSlide > 0) {
+                // Go to previous slide and reveal all its items
+                currentSlide--;
+                updateUI(true); 
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'Space') {
+                e.preventDefault();
+                nextAction();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevAction();
+            }
+        });
+
+        window.addEventListener('hashchange', initFromHash);
+
+        // Theme Toggle
+        let isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        function updateTheme() {
+            document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            themeToggle.innerHTML = `<i data-lucide="${isDark ? 'sun' : 'moon'}"></i>`;
+            lucide.createIcons();
+        }
+        function toggleTheme(e) {
+            e.stopPropagation(); // Prevent triggering nextAction
+            isDark = !isDark;
+            updateTheme();
+        }
+
+        // Init
+        updateTheme();
+        initFromHash();
+    </script>
+</body>
+</html>
