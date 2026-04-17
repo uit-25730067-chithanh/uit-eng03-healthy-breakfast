@@ -1,6 +1,6 @@
 # CLAUDE.md - Premium Vue + TS Presentation Standards
 
-This file defines the technical and quality standards for the `uit-eng03-002` project.
+This file defines the technical and quality standards for the `uit-eng03-healthy-breakfast` project.
 
 ## Development Workflows
 
