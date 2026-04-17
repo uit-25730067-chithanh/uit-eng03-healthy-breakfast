@@ -28,11 +28,11 @@ const preloadImage = (url: string) => {
 
 // --- IMAGE MAPPER ---
 const getSlideImage = (id: string, idx?: number) => {
-  // Use local assets first for reliability and performance
+  const base = import.meta.env.BASE_URL;
   if (id === 'tips-4-grid') {
-    return `/assets/images/slides/tips-4-${idx}.jpg`;
+    return `${base}assets/images/slides/tips-4-${idx}.jpg`;
   }
-  return `/assets/images/slides/${id}.jpg`;
+  return `${base}assets/images/slides/${id}.jpg`;
 }
 
 // Watch for slide changes to preload next
