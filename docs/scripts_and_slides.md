@@ -48,7 +48,7 @@ I know that studying online until 9:30 PM can make us feel exhausted, and we mig
 
 [Grammar Point: Subjunctive Mood] As we have discussed, it is essential that every student in our class prioritize their breakfast to stay healthy and focused for the whole day. Don't let running your brain on low battery stop you from reaching your goals. Even a small, simple meal can make a huge difference.
 
-On behalf of Group 4, I want to say a big thank you to Ms. Tien for your time and to all my classmates for staying with us until this hour. We hope you found our information helpful for your daily life.
+On behalf of Group 4, I want to say a big thank you to Mrs. Tien for your time and to all my classmates for staying with us until this hour. We hope you found our information helpful for your daily life.
 
 ---
 
@@ -284,7 +284,7 @@ To clear this up and provide you with a clear action plan, let’s welcome Thanh
 
 **Slide 9: Closing & Appreciation**
 
-- Text: THANK YOU FOR LISTENING! Special thanks to Ms. Tien & Group 4 classmates.
+- Text: THANK YOU FOR LISTENING! Special thanks to Mrs. Tien & Group 4 classmates.
 - Animation: Fade Out chậm
 
 ---

@@ -57,3 +57,17 @@ To fully understand and maintain this project, AI Agents MUST prioritize reading
 
 - Agent-to-User communication: Vietnamese.
 - Code/Docs/Commit messages: English.
+
+## Immutable Presentation Workflow
+
+To prevent synchronization mismatches between the teleprompter and slide visual steps, every modification MUST follow this protocol:
+
+1. **Extract Logical Beats**: Read the transcript (`docs/scripts_and_slides.md`) and identify every point where a visual change or a pause for emphasis is required.
+2. **Define Parity**:
+    - **Step-Content Parity**: The number of "ideas" or content items (bullets, images, split blocks) MUST equal the number of internal transitions desired.
+    - **Click-Marker Formula**: For any progressive slide, the number of `[CLICK]` markers in `scripts.ts` MUST be exactly `content.length + 1`.
+    - **The Last Click**: The final `[CLICK]` in any script string is strictly reserved for transitioning to the next slide.
+3. **Constraint Enforcement**:
+    - **Avoid Empty Clicks**: Do NOT add `[CLICK]` markers that don't reveal/change anything visually unless absolutely necessary for a natural pause.
+    - **Content Granularity**: If a script section has 5 clicks but the slide only has 3 bullets, you MUST either split the bullets further to create 5 items OR split the slide into two smaller slides.
+4. **Verification**: Before completing any slide update, verify the count: `Total [CLICK] markers - 1 == currentSlide.content.length`.
