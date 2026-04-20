@@ -10,6 +10,7 @@ An interactive, high-end Vue 3 presentation hostable on Vercel.
 - **Custom Visual Components**: Specialized components like `BatteryProgress`, `GlitchEffect`, and `SimpleCharts` for data storytelling.
 - **Glassmorphism Design**: High-end translucent interface combining Tailwind CSS 4 capabilities.
 - **Presenter Mode**: Built-in sidebar with presenter scripts and instant slide navigation.
+- **URL Persistence**: Syncs slide and step state with URL parameters for reliability across reloads.
 
 ## 🏗️ Project Structure
 
@@ -60,18 +61,17 @@ To modify or add a slide, you only need to edit `src/data/slides.ts`:
 - **Enter / Exit Fullscreen**: `Cmd + P` (Mac) or `Ctrl + P` (Windows)
 - **Exit Fullscreen**: `ESC`
 - **Next Slide/Step**: `Space`, `Enter`, `Right Arrow`
+- **Previous Slide/Step**: `Left Arrow`
 
 - **Enter / Exit Fullscreen**: `Cmd + P` (Mac) or `Ctrl + P` (Windows)
 - **Exit Fullscreen**: `ESC`
-- **Next Slide/Step**: `Space`, `Enter`, `Right Arrow`
-- **Previous Slide/Step**: `Left Arrow`
+
+### 🕵️ Stealth Mode (Ghost Teleprompter)
+
+- **Ghost Teleprompter**: `Ctrl + Shift + S` (Stealth Mode)
+- **TP Opacity**: `Ctrl + Shift + Up / Down`
+- **TP Font Size**: `Ctrl + Shift + Plus / Minus`
 
 ---
 
-_Maintained under strict code-quality guidelines. Pls check `.gitignore` & AI `.md` context files before making complex changes._
-- **Exit Fullscreen**: `ESC`
-- **Next Slide/Step**: `Space`, `Enter`, `Right Arrow`
-- **Previous Slide/Step**: `Left Arrow`
-
----
 _Maintained under strict code-quality guidelines. Pls check `.gitignore` & AI `.md` context files before making complex changes._

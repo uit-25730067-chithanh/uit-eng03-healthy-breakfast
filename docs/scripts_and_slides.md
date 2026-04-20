@@ -4,7 +4,7 @@
 
 ### PHẦN 1: INTRODUCTION (Mở đầu & Giới thiệu)
 
-Good evening, Ms. Tien and everyone!
+Good evening, Mrs. Tien and everyone!
 
 It is now about 8:00 PM, and I know we have all been sitting in front of our screens for quite a long time since 6:30. I hope you still have enough energy to join us for a very interesting topic.
 
@@ -255,7 +255,7 @@ To clear this up and provide you with a clear action plan, let’s welcome Thanh
 
 **Slide 1: Introduce Topic and Group**
 
-- Text: Title: THE HEALTH IMPACTS OF SKIPPING BREAKFAST | Subtitle: Group 4 - Class: [Mã lớp]
+- Text: Title: THE HEALTH IMPACTS OF SKIPPING BREAKFAST | Subtitle: Group 4 - Class: ENG03.F22.CN1.TTNT
 - Animation: Fade In / Float In | Nhấn logo UIT góc slide
 
 **Slide 2: Introduce team member**
