@@ -174,11 +174,14 @@ const handleKeyDown = (e: KeyboardEvent) => {
   }
 
   // --- TELEPROMPTER SHORTCUTS ---
+  // Toggle Teleprompter: Cmd+O (Mac) or Ctrl+O (Win)
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "o") {
+    e.preventDefault();
+    tpVisible.value = !tpVisible.value;
+  }
+
   if (e.ctrlKey && e.shiftKey) {
-    if (e.key.toLowerCase() === "s") {
-      e.preventDefault();
-      tpVisible.value = !tpVisible.value;
-    } else if (e.key === "ArrowUp") {
+    if (e.key === "ArrowUp") {
       e.preventDefault();
       tpOpacity.value = Math.min(0.9, tpOpacity.value + 0.05);
     } else if (e.key === "ArrowDown") {

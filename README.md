@@ -63,12 +63,9 @@ To modify or add a slide, you only need to edit `src/data/slides.ts`:
 - **Next Slide/Step**: `Space`, `Enter`, `Right Arrow`
 - **Previous Slide/Step**: `Left Arrow`
 
-- **Enter / Exit Fullscreen**: `Cmd + P` (Mac) or `Ctrl + P` (Windows)
-- **Exit Fullscreen**: `ESC`
-
 ### 🕵️ Stealth Mode (Ghost Teleprompter)
 
-- **Ghost Teleprompter**: `Ctrl + Shift + S` (Stealth Mode)
+- **Ghost Teleprompter**: `Cmd + O` (Mac) or `Ctrl + O` (Windows)
 - **TP Opacity**: `Ctrl + Shift + Up / Down`
 - **TP Font Size**: `Ctrl + Shift + Plus / Minus`
 
