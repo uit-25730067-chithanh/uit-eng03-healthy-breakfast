@@ -15,6 +15,7 @@ import {
 import PremiumImage from "./components/common/PremiumImage.vue";
 import { rawSlides } from "./data/slides";
 import { slideScripts } from "./data/scripts";
+import Confetti from "./components/effects/Confetti.vue";
 
 // --- IMAGE MAPPER ---
 const currentSlideIdx = ref(0);
@@ -60,22 +61,13 @@ watch(
 
 const currentSlide = computed(() => rawSlides[currentSlideIdx.value]);
 
-const totalSteps = computed(() => {
-  const slide = currentSlide.value;
-  if (!slide.layout.progressive) return 0;
-  if (
-    slide.layout.type === "bullets" ||
-    slide.layout.type === "split" ||
-    slide.layout.type === "image-grid"
-  ) {
-    return slide.content.length;
-  } else if (slide.layout.type === "title") {
-    return slide.subtitle ? 1 : 0;
-  } else if (slide.layout.type === "component") {
-    return 1; // All functional components have at least 1 progressive step
-  }
-  return 0;
-});
+const getSlideTotalSteps = (slide: any) => {
+  const script = slideScripts[slide.id] || slide.script || "";
+  const matches = script.match(/\[CLICK\]/gi);
+  return matches ? Math.max(0, matches.length - 1) : 0;
+};
+
+const totalSteps = computed(() => getSlideTotalSteps(currentSlide.value));
 
 const handleNext = () => {
   if (currentStep.value < totalSteps.value) {
@@ -91,25 +83,7 @@ const handlePrev = () => {
     currentStep.value--;
   } else if (currentSlideIdx.value > 0) {
     currentSlideIdx.value--;
-    const prevSlide = rawSlides[currentSlideIdx.value];
-    let prevSlideSteps = 0;
-    if (prevSlide.layout.progressive) {
-      if (
-        prevSlide.layout.type === "bullets" ||
-        prevSlide.layout.type === "split" ||
-        prevSlide.layout.type === "image-grid"
-      ) {
-        prevSlideSteps = prevSlide.content.length;
-      } else if (prevSlide.layout.type === "title") {
-        prevSlideSteps = prevSlide.subtitle ? 1 : 0;
-      } else if (
-        prevSlide.layout.type === "component" &&
-        prevSlide.layout.component === "BatteryProgress"
-      ) {
-        prevSlideSteps = 1;
-      }
-    }
-    currentStep.value = prevSlideSteps;
+    currentStep.value = getSlideTotalSteps(rawSlides[currentSlideIdx.value]);
   }
 };
 
@@ -199,11 +173,22 @@ const handleKeyDown = (e: KeyboardEvent) => {
 
 // --- TELEPROMPTER STATE ---
 const tpVisible = ref(false); // Local only, not synced
-const tpOpacity = ref(0.15); // Default very faint
-const tpFontSize = ref(24); // Default readable for speaker
+const tpOpacity = ref(0.5); // Default very faint
+const tpFontSize = ref(32); // Default readable for speaker
 const SETTINGS_KEY = "uit-breakfast-tp-settings";
 
-// Persistence for settings (but NOT visibility)
+const confettiRef = ref<InstanceType<typeof Confetti> | null>(null);
+
+// Trigger confetti on closing slide
+watch(currentSlideIdx, (newIdx) => {
+  if (rawSlides[newIdx]?.id === "closing") {
+    setTimeout(() => {
+      confettiRef.value?.start();
+    }, 500); // Small delay for entrance animation
+  } else {
+    confettiRef.value?.stop();
+  }
+});
 watch([tpOpacity, tpFontSize], ([newOp, newSize]) => {
   localStorage.setItem(
     SETTINGS_KEY,
@@ -216,22 +201,29 @@ const formattedScript = computed(() => {
   const currentId = currentSlide.value.id;
   let script = slideScripts[currentId] || currentSlide.value.script || "";
 
-  // Auto-append [NEXT SLIDE] if not last slide
-  const isLastSlide = currentSlideIdx.value === rawSlides.length - 1;
-  if (!isLastSlide && !script.includes("[next slide]")) {
-    script += ' <span class="next-slide-marker">[NEXT SLIDE]</span>';
-  }
+  // Split by [CLICK] markers keeping them in the output
+  const segments = script.split(/\[CLICK\]/gi);
 
-  // Use a simple replacement to highlight [click] actions
-  return script
-    .replace(
-      /\[click\]/gi,
-      '<span class="text-orange-500 font-black animate-pulse">[CLICK]</span>',
-    )
-    .replace(
-      /\[next slide\]/gi,
-      '<span class="text-emerald-500 font-black animate-bounce uppercase">[NEXT SLIDE]</span>',
-    );
+  return segments
+    .map((text, idx) => {
+      const isActive = idx === currentStep.value;
+      const isPast = idx < currentStep.value;
+
+      // Wrap each segment in a stylized span
+      const content = text.replace(
+        /\[NEXT SLIDE\]/gi,
+        '<span class="text-emerald-500 font-black animate-bounce uppercase">[NEXT SLIDE]</span>',
+      );
+
+      if (isActive) {
+        return `<span class="bg-emerald-500/20 text-white border-l-4 border-emerald-500 pl-4 py-2 my-2 inline-block transition-all duration-300 scale-[1.02] origin-left drop-shadow-[0_0_15px_rgba(16,185,129,0.3)]">${content} <span class="inline-block text-orange-500 font-black animate-pulse">[NEXT CLICK]</span></span>`;
+      } else if (isPast) {
+        return `<span class="opacity-20 grayscale brightness-50 blur-[0.5px] transition-all duration-500">${content} <span class="inline-block text-slate-500 grayscale">[CLICKED]</span></span>`;
+      } else {
+        return `<span class="opacity-40 transition-all duration-500">${content} <span class="inline-block text-orange-500/50 font-black">[CLICK]</span></span>`;
+      }
+    })
+    .join(" ");
 });
 
 onMounted(() => {
@@ -269,7 +261,7 @@ onMounted(() => {
   if (savedSettings) {
     try {
       const data = JSON.parse(savedSettings);
-      tpOpacity.value = data.opacity || 0.6;
+      tpOpacity.value = data.opacity || 0.5;
       tpFontSize.value = data.fontSize || 32;
     } catch (e) {}
   }
@@ -418,38 +410,73 @@ const handleContentClick = (e: MouseEvent) => {
                     v-if="currentSlide.subtitle"
                     class="inline-block mb-6 px-8 py-3 bg-white/20 backdrop-blur-xl rounded-full border border-white/30 shadow-lg transition-all duration-700"
                     :class="
-                      !currentSlide.layout.progressive || currentStep >= 1
+                      !currentSlide.layout.progressive || currentStep >= 0
                         ? 'opacity-100 translate-y-0'
                         : 'opacity-0 -translate-y-5'
                     "
                   >
                     <span
                       class="text-xl lg:text-2xl text-emerald-50 font-bold tracking-widest uppercase shadow-sm"
-                    >
-                      {{ currentSlide.subtitle }}
-                    </span>
+                      v-html="currentSlide.subtitle"
+                    ></span>
                   </div>
                   <h1
-                    class="text-6xl lg:text-8xl font-black mb-8 tracking-tight text-white leading-tight drop-shadow-2xl animate-in fade-in slide-in-from-bottom-10 duration-700"
+                    class="text-6xl lg:text-8xl font-black mb-10 tracking-tight text-white leading-tight drop-shadow-2xl transition-all duration-700"
+                    :class="
+                      !currentSlide.layout.progressive || currentStep >= 0
+                        ? 'opacity-100 translate-y-0'
+                        : 'opacity-0 translate-y-10'
+                    "
+                    v-html="currentSlide.title"
+                  ></h1>
+
+                  <!-- Title Content Items (New) -->
+                  <div
+                    v-if="
+                      currentSlide.content && currentSlide.content.length > 0
+                    "
+                    class="flex flex-col items-center space-y-4 pt-8"
                   >
-                    {{ currentSlide.title }}
-                  </h1>
+                    <div
+                      v-for="(item, idx) in currentSlide.content"
+                      :key="idx"
+                      class="text-2xl lg:text-4xl text-emerald-100/90 font-medium transition-all duration-700"
+                      :class="
+                        !currentSlide.layout.progressive || currentStep > idx
+                          ? 'opacity-100 translate-y-0'
+                          : 'opacity-0 translate-y-4'
+                      "
+                      v-html="item"
+                    ></div>
+                  </div>
                 </div>
               </div>
 
               <!-- BULLETS LAYOUT -->
               <div
                 v-else-if="currentSlide.layout.type === 'bullets'"
-                class="flex flex-col lg:flex-row h-full w-full bg-slate-50"
+                class="flex flex-col lg:flex-row h-full w-full transition-colors duration-1000"
+                :class="
+                  currentSlide.id === 'consequences-4'
+                    ? 'bg-red-50'
+                    : 'bg-slate-50'
+                "
               >
                 <div
                   class="w-full lg:w-[55%] p-12 lg:p-20 flex flex-col justify-center relative z-10"
                 >
                   <h2
-                    class="text-5xl lg:text-6xl font-black text-emerald-800 mb-12 border-l-8 border-orange-500 pl-6 leading-tight drop-shadow-sm"
-                  >
-                    {{ currentSlide.title }}
-                  </h2>
+                    class="text-5xl lg:text-6xl font-black mb-12 border-l-8 pl-6 leading-tight drop-shadow-sm transition-all duration-700"
+                    :class="[
+                      currentSlide.id === 'consequences-4'
+                        ? 'text-red-900 border-red-600'
+                        : 'text-emerald-800 border-orange-500',
+                      !currentSlide.layout.progressive || currentStep >= 0
+                        ? 'opacity-100 translate-y-0'
+                        : 'opacity-0 translate-y-5',
+                    ]"
+                    v-html="currentSlide.title"
+                  ></h2>
                   <div class="flex flex-col space-y-5 max-w-4xl relative">
                     <div
                       v-for="(item, idx) in currentSlide.content"
@@ -466,7 +493,7 @@ const handleContentClick = (e: MouseEvent) => {
                       >
                         <CheckCircle2 class="w-8 h-8 text-emerald-600" />
                       </div>
-                      <span class="leading-snug flex-1">{{ item }}</span>
+                      <span class="leading-snug flex-1" v-html="item"></span>
                     </div>
                   </div>
                 </div>
@@ -501,10 +528,31 @@ const handleContentClick = (e: MouseEvent) => {
                     class="w-20 h-20 text-orange-400 mx-auto mb-8 opacity-60"
                   />
                   <h2
-                    class="text-5xl md:text-6xl font-bold italic leading-snug text-emerald-900 drop-shadow-sm"
+                    class="text-5xl md:text-6xl font-bold italic leading-snug text-emerald-900 drop-shadow-sm transition-all duration-700"
+                    :class="
+                      !currentSlide.layout.progressive || currentStep >= 0
+                        ? 'opacity-100 translate-y-0'
+                        : 'opacity-0 translate-y-5'
+                    "
                   >
-                    "{{ currentSlide.title }}"
+                    &ldquo;<span v-html="currentSlide.title"></span>&rdquo;
                   </h2>
+                  <div
+                    v-if="currentSlide.content.length > 0"
+                    class="mt-8 space-y-6"
+                  >
+                    <div
+                      v-for="(item, idx) in currentSlide.content"
+                      :key="idx"
+                      class="text-2xl md:text-3xl font-medium text-emerald-800/80 transition-all duration-700"
+                      :class="
+                        !currentSlide.layout.progressive || currentStep > idx
+                          ? 'opacity-100 translate-y-0'
+                          : 'opacity-0 translate-y-5'
+                      "
+                      v-html="item"
+                    ></div>
+                  </div>
                 </div>
               </div>
 
@@ -517,10 +565,14 @@ const handleContentClick = (e: MouseEvent) => {
                   class="w-full lg:w-1/2 p-16 lg:p-24 flex flex-col justify-center"
                 >
                   <h2
-                    class="text-5xl lg:text-6xl font-black text-emerald-800 mb-12 leading-tight pr-8 drop-shadow-sm"
-                  >
-                    {{ currentSlide.title }}
-                  </h2>
+                    class="text-5xl lg:text-6xl font-black text-emerald-800 mb-12 leading-tight pr-8 drop-shadow-sm transition-all duration-700"
+                    :class="
+                      !currentSlide.layout.progressive || currentStep >= 0
+                        ? 'opacity-100 translate-y-0'
+                        : 'opacity-0 translate-y-5'
+                    "
+                    v-html="currentSlide.title"
+                  ></h2>
                   <div class="space-y-6">
                     <div
                       v-for="(item, idx) in currentSlide.content"
@@ -532,7 +584,7 @@ const handleContentClick = (e: MouseEvent) => {
                           : 'opacity-0 translate-y-10'
                       "
                     >
-                      {{ item }}
+                      <span v-html="item"></span>
                     </div>
                   </div>
                 </div>
@@ -551,10 +603,14 @@ const handleContentClick = (e: MouseEvent) => {
                 class="flex flex-col p-12 lg:p-16 h-full bg-emerald-50 justify-center w-full relative"
               >
                 <h2
-                  class="text-5xl lg:text-6xl font-black text-emerald-800 mb-12 text-center z-10 tracking-tight drop-shadow-sm"
-                >
-                  {{ currentSlide.title }}
-                </h2>
+                  class="text-5xl lg:text-6xl font-black text-emerald-800 mb-12 text-center z-10 tracking-tight drop-shadow-sm transition-all duration-700"
+                  :class="
+                    !currentSlide.layout.progressive || currentStep >= 0
+                      ? 'opacity-100 translate-y-0'
+                      : 'opacity-0 translate-y-5'
+                  "
+                  v-html="currentSlide.title"
+                ></h2>
                 <div
                   class="grid grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto w-full z-10"
                 >
@@ -565,7 +621,7 @@ const handleContentClick = (e: MouseEvent) => {
                     :class="
                       !currentSlide.layout.progressive || currentStep > idx
                         ? 'opacity-100 translate-y-0'
-                        : 'opacity-10 translate-y-10'
+                        : 'opacity-0 translate-y-10'
                     "
                   >
                     <div
@@ -576,12 +632,22 @@ const handleContentClick = (e: MouseEvent) => {
                         class-name="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                         :lazy="true"
                       />
+                      <div
+                        v-if="
+                          currentSlide.meta?.labels &&
+                          currentSlide.meta.labels[idx]
+                        "
+                        class="absolute top-4 left-4 bg-black/60 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-full border border-white/20 z-20"
+                      >
+                        {{ currentSlide.meta.labels[idx] }}
+                      </div>
                     </div>
                     <div class="flex items-center space-x-2 mb-4">
                       <Leaf class="w-6 h-6 text-orange-500" />
-                      <h3 class="text-2xl font-bold text-slate-800 text-center">
-                        {{ item }}
-                      </h3>
+                      <h3
+                        class="text-2xl font-bold text-slate-800 text-center"
+                        v-html="item"
+                      ></h3>
                     </div>
                   </div>
                 </div>
@@ -613,7 +679,12 @@ const handleContentClick = (e: MouseEvent) => {
                       {{ currentSlide.title }}
                     </h2>
                     <p
-                      class="text-3xl lg:text-4xl text-slate-700 font-medium leading-relaxed"
+                      class="text-3xl lg:text-4xl text-slate-700 font-medium leading-relaxed transition-all duration-700"
+                      :class="
+                        currentStep > 0
+                          ? 'opacity-100 translate-x-0'
+                          : 'opacity-0 -translate-x-10'
+                      "
                     >
                       The brain is only 2% of body weight but consumes
                       <span
@@ -624,7 +695,12 @@ const handleContentClick = (e: MouseEvent) => {
                     </p>
                   </div>
                   <div
-                    class="w-full lg:w-1/2 h-[500px] relative mt-12 lg:mt-0 flex items-center justify-center bg-white rounded-[3rem] shadow-2xl border border-slate-100 p-10 animate-in zoom-in-90 duration-1000"
+                    class="w-full lg:w-1/2 h-[500px] relative mt-12 lg:mt-0 flex items-center justify-center bg-white rounded-[3rem] shadow-2xl border border-slate-100 p-10 transition-all duration-1000"
+                    :class="
+                      currentStep > 1
+                        ? 'opacity-100 scale-100'
+                        : 'opacity-0 scale-90'
+                    "
                   >
                     <svg
                       viewBox="0 0 400 400"
@@ -685,8 +761,8 @@ const handleContentClick = (e: MouseEvent) => {
                       class="h-full rounded-[3rem] transition-all duration-[1.5s] ease-in-out"
                       :class="
                         currentStep > 0
-                          ? 'bg-red-400 w-[15%] shadow-[0_0_20px_rgba(248,113,113,0.5)]'
-                          : 'bg-emerald-400 w-[100%] shadow-[0_0_20px_rgba(52,211,153,0.5)]'
+                          ? 'bg-red-400 w-[15%] shadow-[0_0_40px_rgba(239,68,68,0.6)]'
+                          : 'bg-emerald-400 w-[100%] shadow-[0_0_40px_rgba(16,185,129,0.4)]'
                       "
                     ></div>
                     <div
@@ -695,21 +771,40 @@ const handleContentClick = (e: MouseEvent) => {
                     <div
                       class="absolute inset-0 flex items-center justify-center text-4xl font-black tracking-widest text-slate-800 pointer-events-none drop-shadow-md uppercase"
                     >
-                      {{
-                        currentStep === 0 ? "ENERGY: 100%" : "WARNING: CRITICAL"
-                      }}
+                      <transition name="fade" mode="out-in">
+                        <span :key="currentStep">
+                          {{
+                            currentStep === 0
+                              ? "ENERGY: 100%"
+                              : currentStep === 1
+                                ? "WARNING: CRITICAL"
+                                : "SYSTEM FAILURE"
+                          }}
+                        </span>
+                      </transition>
                     </div>
                   </div>
                   <div
                     class="mt-16 text-3xl font-bold text-red-600 bg-red-50 px-10 py-5 rounded-3xl shadow-lg flex items-center gap-4 border border-red-200 transition-all duration-500"
                     :class="
-                      currentStep > 0
+                      currentStep === 1
                         ? 'opacity-100 translate-y-0'
                         : 'opacity-0 translate-y-5'
                     "
                   >
                     <AlertCircle class="w-10 h-10" />
                     <span>CORTISOL LEVELS RISING...</span>
+                  </div>
+                  <div
+                    class="mt-6 text-3xl font-bold text-red-700 bg-red-100 px-10 py-5 rounded-3xl shadow-xl flex items-center gap-4 border border-red-300 transition-all duration-500 animate-pulse"
+                    :class="
+                      currentStep > 1
+                        ? 'opacity-100 translate-y-0 scale-110'
+                        : 'opacity-0 translate-y-5'
+                    "
+                  >
+                    <AlertCircle class="w-10 h-10" />
+                    <span>BRAIN CAPACITY: 20%</span>
                   </div>
                 </div>
 
@@ -744,17 +839,33 @@ const handleContentClick = (e: MouseEvent) => {
                       {{ currentSlide.title }}
                     </div>
                   </div>
-                  <div
-                    class="mt-16 bg-red-600/20 px-12 py-6 rounded-2xl border border-red-500/50 backdrop-blur-md"
-                  >
-                    <span
-                      class="text-red-500 font-mono text-3xl font-bold animate-pulse uppercase tracking-widest"
+                  <div class="mt-16 flex flex-col space-y-6 max-w-4xl">
+                    <div
+                      v-for="(item, idx) in currentSlide.content"
+                      :key="idx"
+                      class="bg-red-600/10 px-10 py-5 rounded-2xl border border-red-500/30 backdrop-blur-md transition-all duration-500"
+                      :class="
+                        currentStep > idx
+                          ? 'opacity-100 translate-x-0'
+                          : 'opacity-0 -translate-x-10'
+                      "
                     >
-                      {{
-                        currentSlide.meta?.extraData?.text ||
-                        "SYSTEM CRITICAL ERROR"
-                      }}
-                    </span>
+                      <span
+                        class="text-red-400 font-mono text-2xl lg:text-3xl font-bold uppercase tracking-widest block mb-2"
+                        v-if="idx < 2"
+                      >
+                        > [CRITICAL_ERR]
+                      </span>
+                      <span
+                        class="text-white font-mono text-2xl lg:text-3xl font-bold"
+                        :class="
+                          idx === 2
+                            ? 'text-orange-400 border-l-4 border-orange-500 pl-6'
+                            : ''
+                        "
+                        v-html="item"
+                      ></span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -879,6 +990,7 @@ const handleContentClick = (e: MouseEvent) => {
           </div>
         </div>
       </div>
+      <Confetti ref="confettiRef" />
     </div>
   </div>
 </template>
@@ -955,5 +1067,13 @@ const handleContentClick = (e: MouseEvent) => {
 .zoom-in-90 {
   animation-name: zoomIn90;
   animation-duration: 1s;
+}
+
+.grammar-focus {
+  color: #f97316 !important;
+  font-weight: 800 !important;
+  text-decoration: underline !important;
+  text-decoration-color: rgba(253, 186, 116, 0.5) !important;
+  text-underline-offset: 4px !important;
 }
 </style>
