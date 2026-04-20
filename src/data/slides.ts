@@ -1,5 +1,7 @@
+import { slideScripts } from "./scripts";
+
 export interface SlideLayout {
-  type: 'title' | 'bullets' | 'quote' | 'split' | 'image-grid' | 'component';
+  type: "title" | "bullets" | "quote" | "split" | "image-grid" | "component";
   component?: string;
   progressive?: boolean;
 }
@@ -16,23 +18,29 @@ export interface SlideData {
 }
 
 export const rawSlides: SlideData[] = [
-  // SECTION 1: INTRODUCTION
+  // SECTION 1: INTRODUCTION (Thanh Hải)
   {
     id: "intro-1",
     title: "THE HEALTH IMPACTS OF SKIPPING BREAKFAST",
-    subtitle: "Group 4 - Class: [Mã lớp]",
+    subtitle: "Group 4 - Class: ENG03.F22.CN1.TTNT",
     speaker: "Thanh Hải",
     content: [],
-    script: "Good evening, Ms. Tien and everyone! It is now about 8:00 PM, and I hope you still have enough energy to join us for a very interesting topic.",
-    layout: { type: 'title', progressive: true }
+    script: slideScripts["intro-1"],
+    layout: { type: "title", progressive: true },
   },
   {
     id: "intro-2",
     title: "Our Team",
     speaker: "Thanh Hải",
-    content: ["Thanh Hải (Leader)", "Chí Thanh", "Đức Ý", "Phước Thịnh", "Hoàng Sơn"],
-    script: "Today, our team includes 5 members: Chí Thanh, Đức Ý, Phước Thịnh, Hoàng Sơn, and myself. We are very excited to share with you our presentation on Topic 4: 'The Power of Breakfast: Why Students Should Never Skip It.'",
-    layout: { type: 'bullets', progressive: true }
+    content: [
+      "Thanh Hải (Leader)",
+      "Chí Thanh",
+      "Đức Ý",
+      "Phước Thịnh",
+      "Hoàng Sơn",
+    ],
+    script: slideScripts["intro-2"],
+    layout: { type: "bullets", progressive: true },
   },
   {
     id: "intro-3",
@@ -42,197 +50,248 @@ export const rawSlides: SlideData[] = [
       "Scientific Health Benefits",
       "Mental and Physical Performance",
       "Consequences of Skipping",
-      "Practical Prep Tips"
+      "Practical Prep Tips",
     ],
-    script: "To show you why this meal is a game-changer, our presentation is divided into four main parts...",
-    layout: { type: 'bullets', progressive: true }
+    script: slideScripts["intro-3"],
+    layout: { type: "bullets", progressive: true },
   },
   {
     id: "intro-4",
     title: "Is skipping breakfast just a time-saver or a hidden health-killer?",
     speaker: "Thanh Hải",
     content: [],
-    script: "But before we dive into the details, I have a question for all of you...",
-    layout: { type: 'quote' }
+    script: slideScripts["intro-4"],
+    layout: { type: "quote" },
   },
 
-  // SECTION 2: HEALTH BENEFITS
+  // SECTION 2: HEALTH BENEFITS (Phước Thịnh)
   {
     id: "benefits-1",
     title: "Health Benefits of a Healthy Breakfast",
     subtitle: "How many of you had breakfast today?",
     speaker: "Phước Thịnh",
     content: [],
-    script: "Good evening everyone, and thank you, Hai, for your clear introduction... Well, today I’m going to talk about the health benefits of having a healthy breakfast.",
-    layout: { type: 'title' }
+    script: slideScripts["benefits-1"],
+    layout: { type: "title" },
   },
   {
     id: "benefits-2",
     title: "🔋 More Energy",
     speaker: "Phước Thịnh",
     content: ["Feel awake", "Ready for the day"],
-    script: "As you know, after a long night of sleep, our body feels tired and needs energy. A healthy breakfast helps us feel more awake...",
-    layout: { type: 'bullets', progressive: true }
+    script: slideScripts["benefits-2"],
+    layout: { type: "bullets", progressive: true },
   },
   {
     id: "benefits-3",
     title: "⚖️ Better Weight Control",
     speaker: "Phước Thịnh",
     content: ["Less overeating", "Feel full longer"],
-    script: "Another important point is about weight control. Believe it or not, people who eat breakfast regularly are less likely to eat too much later in the day.",
-    layout: { type: 'bullets', progressive: true }
+    script: slideScripts["benefits-3"],
+    layout: { type: "bullets", progressive: true },
   },
   {
     id: "benefits-4",
     title: "🥗 Important Nutrients",
     speaker: "Phước Thịnh",
     content: ["Vitamins", "Minerals", "Fiber", "Strong immune system"],
-    script: "Breakfast is also a great chance to give our body important nutrients...",
-    layout: { type: 'bullets', progressive: true }
+    script: slideScripts["benefits-4"],
+    layout: { type: "bullets", progressive: true },
   },
   {
     id: "benefits-5",
-    title: "❤️ Long-term Health",
+    title: "🔄 Better Digestion",
     speaker: "Phước Thịnh",
-    content: ["Faster metabolism", "Lower risk of heart disease"],
-    script: "Another amazing thing is that breakfast supports our digestion and in fact, some studies show it lowers the risk of heart disease...",
-    layout: { type: 'bullets', progressive: true }
+    content: ["Faster metabolism", "Use energy better"],
+    script: slideScripts["benefits-5"],
+    layout: { type: "bullets", progressive: true },
+  },
+  {
+    id: "benefits-6",
+    title: "❤️ Heart Health",
+    speaker: "Phước Thịnh",
+    content: ["Lower risk of disease", "Long-term benefits"],
+    script: slideScripts["benefits-6"],
+    layout: { type: "bullets", progressive: true },
+  },
+  {
+    id: "benefits-7",
+    title: "Summary",
+    speaker: "Phước Thịnh",
+    content: ["✔ More energy", "✔ Better weight", "✔ Better health"],
+    script: slideScripts["benefits-7"],
+    layout: { type: "bullets", progressive: true },
+  },
+  {
+    id: "benefits-8",
+    title: "Impact on Mental and Physical Performance",
+    subtitle: "Why does breakfast affect your performance?",
+    speaker: "Phước Thịnh",
+    content: [],
+    script: slideScripts["benefits-8"],
+    layout: { type: "title" },
   },
 
-  // SECTION 3: MENTAL AND PHYSICAL PERFORMANCE
+  // SECTION 3: MENTAL & PHYSICAL PERFORMANCE (Chí Thanh)
   {
     id: "performance-1",
     title: "System Status: [WAITING FOR POWER]",
     speaker: "Chí Thanh",
-    content: ["GlitchEffect"], 
-    script: "Thank you, Thịnh. You know, as a Developer, I often see our body as the hardware and our brain as the Operating System...",
-    layout: { type: 'component', component: 'GlitchEffect', progressive: false },
-    meta: { extraData: { text: "Brain.exe has stopped working" } }
+    content: [],
+    script: slideScripts["performance-1"],
+    layout: { type: "component", component: "GlitchEffect" },
+    meta: { extraData: { text: "System Status: [WAITING FOR POWER]" } },
   },
   {
     id: "performance-2",
     title: "Did you skip breakfast?",
     speaker: "Chí Thanh",
-    content: [],
-    script: "Quick question for everyone: Raise your hand if you skipped breakfast this morning?",
-    layout: { type: 'title' }
+    content: ["Morning Fuel Level"],
+    script: slideScripts["performance-2"],
+    layout: {
+      type: "component",
+      component: "BatteryProgress",
+      progressive: true,
+    },
   },
   {
     id: "performance-3",
-    title: "The 20% Energy Rule",
+    title: "The 2GB RAM Disaster",
     speaker: "Chí Thanh",
-    content: ["20% Brain Consumption", "Mental work is a high-energy task."],
-    script: "Research shows that the brain consumes 20% of your total energy. Mental work is a high-energy task for your system.",
-    layout: { type: 'component', component: 'SimpleCharts', progressive: true },
-    meta: { extraData: { chartType: 'pie' } }
+    content: ["Error: Memory Overflow", "Brain.exe has stopped working"],
+    script: slideScripts["performance-3"],
+    layout: { type: "component", component: "GlitchEffect", progressive: true },
+    meta: { extraData: { text: "Error: Memory Overflow" } },
   },
   {
     id: "performance-4",
-    title: "Overclocking vs. Energy Crash",
+    title: "The 20% Energy Rule",
     speaker: "Chí Thanh",
-    content: ["LOW BATTERY: SKIP BREAKFAST", "The 10 AM Crash"],
-    script: "If you skip breakfast, you might try to 'overclock' your body with coffee at 8 AM. But by 10 AM, you will face an 'Energy Crash.'",
-    layout: { type: 'component', component: 'BatteryProgress', progressive: true },
+    content: ["20% Brain Consumption", "High-Energy Task: Coding"],
+    script: slideScripts["performance-4"],
+    layout: { type: "component", component: "SimpleCharts", progressive: true },
+    meta: { extraData: { chartType: "pie" } },
   },
   {
     id: "performance-5",
+    title: "Overclocking vs. Energy Crash",
+    speaker: "Chí Thanh",
+    content: ["8 AM: Overclocking with Caffeine", "10 AM: System Crash"],
+    script: slideScripts["performance-5"],
+    layout: { type: "split", progressive: true },
+  },
+  {
+    id: "performance-6",
     title: "Your code is only as good as your breakfast.",
     speaker: "Chí Thanh",
     content: [],
-    script: "To wrap up: Breakfast is the fuel that boots up your system...",
-    layout: { type: 'quote' }
+    script: slideScripts["performance-6"],
+    layout: { type: "quote" },
   },
 
-  // SECTION 4: CONSEQUENCES
+  // SECTION 4: CONSEQUENCES (Hoàng Sơn)
   {
     id: "consequences-1",
     title: "NO FUEL → LOW PERFORMANCE",
     speaker: "Hoàng Sơn",
-    content: ["7 AM class", "Coffee only ☕"],
-    script: "Thank you, Thanh. Let me share a quick situation. One day, I had an early class at 7 AM. I was too lazy to eat, so I just grabbed a cup of coffee...",
-    layout: { type: 'split', progressive: true }
+    content: ["7 AM class – Coffee only ☕"],
+    script: slideScripts["consequences-1"],
+    layout: { type: "split", progressive: true },
   },
   {
     id: "consequences-2",
-    title: "ENERGY CRASH ⚡",
+    title: "ENERGY CRASH + BRAIN FAILURE",
     speaker: "Hoàng Sơn",
     content: ["Brain.exe not responding 💻", "Low glucose → Low focus"],
-    script: "At first, everything felt normal. But after about one or two hours, my blood sugar dropped...",
-    layout: { type: 'bullets', progressive: true }
+    script: slideScripts["consequences-2"],
+    layout: { type: "bullets", progressive: true },
   },
   {
     id: "consequences-3",
-    title: "Mood & Long-term Impacts",
+    title: "OVEREATING EFFECT",
     speaker: "Hoàng Sơn",
-    content: ["MOOD SWINGS 😤", "LONG-TERM RISKS ⚠️", "Weight gain", "Heart disease"],
-    script: "And it doesn’t stop there. When I skip breakfast, I experience mood swings. In the long term, it can lead to serious problems...",
-    layout: { type: 'bullets', progressive: true }
+    content: ["Skip → Starving → Overeating", "Junk food cycle"],
+    script: slideScripts["consequences-3"],
+    layout: { type: "bullets", progressive: true },
   },
   {
     id: "consequences-4",
+    title: "MOOD + LONG-TERM IMPACT",
+    speaker: "Hoàng Sơn",
+    content: ["Mood swings & Irritation", "Technical Debt for Health"],
+    script: slideScripts["consequences-4"],
+    layout: { type: "bullets", progressive: true },
+  },
+  {
+    id: "consequences-5",
     title: "Skipping breakfast costs your performance. How can we fix this?",
     speaker: "Hoàng Sơn",
     content: [],
-    script: "Skipping breakfast may seem small, but the consequences are real. How can we build a better breakfast habit? Let's welcome Ý.",
-    layout: { type: 'quote' }
+    script: slideScripts["consequences-5"],
+    layout: { type: "quote" },
   },
 
-  // SECTION 5: TIPS
+  // SECTION 5: TIPS (Đức Ý)
   {
     id: "tips-1",
     title: "UPGRADE YOUR START",
-    subtitle: "From Quick Bite to Brain Fuel",
+    subtitle: "From 'Quick Bite' to 'Brain Fuel'",
     speaker: "Đức Ý",
     content: [],
-    script: "First off, a huge thank you to Mr. Son... I will now dive into some practical ways we can 'upgrade' our most important meal of the day: Breakfast.",
-    layout: { type: 'title' }
+    script: slideScripts["tips-1"],
+    layout: { type: "title" },
   },
   {
     id: "tips-2",
     title: "1. BALANCE YOUR MACROS",
     speaker: "Đức Ý",
-    content: ["Carbs, Protein & Fiber", "Solution: Bánh mì + Extra Egg & Cucumber!"],
-    script: "First, Balance Your Macronutrients. Most student breakfasts are too high in carbs. Ask for extra cucumber and an additional egg to stay sharp until lunch!",
-    layout: { type: 'split', progressive: true }
+    content: ["Carbs, Protein & Fiber", "Upgrade: Extra Egg + Cucumber"],
+    script: slideScripts["tips-2"],
+    layout: { type: "split", progressive: true },
   },
   {
     id: "tips-3",
     title: "2. RETHINK YOUR DRINK",
     speaker: "Đức Ý",
-    content: ["The 'Sugar Crash' Trap", "Swap Cà phê sữa for Unsweetened Soy Milk", "Your skin & heart will thank you"],
-    script: "Second, Rethink Your Drinks. The condensed milk in Cà phê sữa leads to a 'sugar crash'. Try fresh, unsweetened soy milk instead.",
-    layout: { type: 'bullets', progressive: true }
+    content: ["The 'Sugar Crash' Trap", "Swap Cafe Sữa for Soy Milk"],
+    script: slideScripts["tips-3"],
+    layout: { type: "bullets", progressive: true },
   },
   {
     id: "tips-4",
     title: "3. EMBRACE LOCAL PRODUCE",
     speaker: "Đức Ý",
-    content: ["Natural Multivitamins", "Cheap", "Fast", "Healthy"],
-    script: "Third, Embrace Local Produce. Grab a banana or a slice of papaya, which are the best natural multivitamin you can find.",
-    layout: { type: 'image-grid', progressive: true }
+    content: [
+      "Fresh Banana",
+      "Sweet Papaya",
+      "Juicy Mango",
+      "Local Dragonfruit",
+    ],
+    script: slideScripts["tips-4"],
+    layout: { type: "image-grid", progressive: true },
   },
   {
     id: "tips-5",
     title: "3 STEPS TO WIN THE MORNING",
     speaker: "Đức Ý",
     content: ["Add Greens & Protein", "Cut Sugar", "Stay Fresh"],
-    script: "That summarizes my three tips for a better breakfast. To provide you with a clear action plan, let’s welcome Thanh Hai...",
-    layout: { type: 'bullets', progressive: true }
+    script: slideScripts["tips-5"],
+    layout: { type: "bullets", progressive: true },
   },
 
-  // SECTION 6: CONCLUSION
+  // SECTION 6: CONCLUSION (Thanh Hải)
   {
     id: "outro-1",
     title: "The Big Picture",
     speaker: "Thanh Hải",
     content: [
-      "Scientific Health Benefits ✔",
-      "Mental Performance ✔",
-      "Long-term Risks ✔",
-      "Practical Prep Tips ✔"
+      "Thinh: Scientific Health Benefits ✔",
+      "Thanh: Mental Performance ✔",
+      "Son: Long-term Risks ✔",
+      "Y: Practical Prep Tips ✔",
     ],
-    script: "Thank you, Đức Ý! To wrap up our online presentation tonight, let’s look back at the big picture...",
-    layout: { type: 'bullets', progressive: true }
+    script: slideScripts["outro-1"],
+    layout: { type: "bullets", progressive: true },
   },
   {
     id: "outro-2",
@@ -240,8 +299,8 @@ export const rawSlides: SlideData[] = [
     subtitle: "It is essential that you prioritize your breakfast.",
     speaker: "Thanh Hải",
     content: [],
-    script: "As we have discussed, it is essential that every student in our class prioritize their breakfast... Don't let running your brain on low battery stop you.",
-    layout: { type: 'title' }
+    script: slideScripts["outro-2"],
+    layout: { type: "title" },
   },
   {
     id: "outro-3",
@@ -249,7 +308,7 @@ export const rawSlides: SlideData[] = [
     subtitle: "Special thanks to Ms. Tien & Group 4 classmates.",
     speaker: "Thanh Hải",
     content: [],
-    script: "On behalf of Group 4, I want to say a big thank you to Ms. Tien for your time and to all my classmates for staying with us until this hour.",
-    layout: { type: 'title' }
-  }
+    script: slideScripts["outro-3"],
+    layout: { type: "title" },
+  },
 ];
