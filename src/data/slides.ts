@@ -1,7 +1,7 @@
 import { slideScripts } from "./scripts";
 
 export interface SlideLayout {
-  type: "title" | "bullets" | "quote" | "split" | "image-grid" | "component";
+  type: "title" | "bullets" | "quote" | "split" | "image-grid" | "component" | "InsightCanvas" | "GlitchEffect";
   component?: string;
   progressive?: boolean;
 }
@@ -159,7 +159,7 @@ export const rawSlides: SlideData[] = [
     icon: "Brain",
     content: ["Hardware (Body) vs. OS (Brain)"],
     script: slideScripts["performance-1"],
-    layout: { type: "component", component: "GlitchEffect", progressive: true },
+    layout: { type: "GlitchEffect", progressive: true },
     meta: { extraData: { text: "System Status: [WAITING FOR POWER]" } },
   },
   {
@@ -186,7 +186,7 @@ export const rawSlides: SlideData[] = [
       "It is <span class='grammar-focus'>essential that</span> a developer <span class='grammar-focus'>eat</span> breakfast.",
     ],
     script: slideScripts["performance-3"],
-    layout: { type: "component", component: "GlitchEffect", progressive: true },
+    layout: { type: "GlitchEffect", progressive: true },
     meta: { extraData: { text: "Error: Memory Overflow" } },
   },
   {
