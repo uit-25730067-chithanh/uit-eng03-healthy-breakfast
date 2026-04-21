@@ -11,7 +11,58 @@ import {
   Quote,
   BrainCircuit,
   Coffee,
+  Zap,
+  Scale,
+  Apple,
+  Activity,
+  Heart,
+  Cpu,
+  AlertTriangle,
+  Trophy,
+  ListChecks,
+  Rocket,
+  Users,
+  Brain,
+  Battery,
+  Timer,
+  Clock,
+  ZapOff,
+  Utensils,
+  List,
+  Check,
 } from "lucide-vue-next";
+
+const IconMap: Record<string, any> = {
+  ChevronLeft,
+  ChevronRight,
+  Maximize,
+  Presentation,
+  Leaf,
+  CheckCircle2,
+  AlertCircle,
+  Quote,
+  BrainCircuit,
+  Coffee,
+  Zap,
+  Scale,
+  Apple,
+  Activity,
+  Heart,
+  Cpu,
+  AlertTriangle,
+  Trophy,
+  ListChecks,
+  Rocket,
+  Users,
+  Brain,
+  Battery,
+  Timer,
+  Clock,
+  ZapOff,
+  Utensils,
+  List,
+  Check,
+};
 import PremiumImage from "./components/common/PremiumImage.vue";
 import { rawSlides } from "./data/slides";
 import { slideScripts } from "./data/scripts";
@@ -201,29 +252,22 @@ const formattedScript = computed(() => {
   const currentId = currentSlide.value.id;
   let script = slideScripts[currentId] || currentSlide.value.script || "";
 
-  // Split by [CLICK] markers keeping them in the output
-  const segments = script.split(/\[CLICK\]/gi);
+  // Auto-append [NEXT SLIDE] if not last slide
+  const isLastSlide = currentSlideIdx.value === rawSlides.length - 1;
+  if (!isLastSlide && !script.includes("[next slide]")) {
+    script += ' <span class="next-slide-marker">[NEXT SLIDE]</span>';
+  }
 
-  return segments
-    .map((text, idx) => {
-      const isActive = idx === currentStep.value;
-      const isPast = idx < currentStep.value;
-
-      // Wrap each segment in a stylized span
-      const content = text.replace(
-        /\[NEXT SLIDE\]/gi,
-        '<span class="text-emerald-500 font-black animate-bounce uppercase">[NEXT SLIDE]</span>',
-      );
-
-      if (isActive) {
-        return `<span class="bg-emerald-500/20 text-white border-l-4 border-emerald-500 pl-4 py-2 my-2 inline-block transition-all duration-300 scale-[1.02] origin-left drop-shadow-[0_0_15px_rgba(16,185,129,0.3)]">${content} <span class="inline-block text-orange-500 font-black animate-pulse">[NEXT CLICK]</span></span>`;
-      } else if (isPast) {
-        return `<span class="opacity-20 grayscale brightness-50 blur-[0.5px] transition-all duration-500">${content} <span class="inline-block text-slate-500 grayscale">[CLICKED]</span></span>`;
-      } else {
-        return `<span class="opacity-40 transition-all duration-500">${content} <span class="inline-block text-orange-500/50 font-black">[CLICK]</span></span>`;
-      }
-    })
-    .join(" ");
+  // Use a simple replacement to highlight [click] actions
+  return script
+    .replace(
+      /\[click\]/gi,
+      '<span class="text-orange-500 font-black">[CLICK]</span>',
+    )
+    .replace(
+      /\[next slide\]/gi,
+      '<span class="text-emerald-500 font-black animate-bounce uppercase">[NEXT SLIDE]</span>',
+    );
 });
 
 onMounted(() => {
@@ -423,12 +467,44 @@ const handleContentClick = (e: MouseEvent) => {
                   <h1
                     class="text-6xl lg:text-8xl font-black mb-10 tracking-tight text-white leading-tight drop-shadow-2xl transition-all duration-700"
                     :class="
-                      !currentSlide.layout.progressive || currentStep >= 0
+                      !currentSlide.layout.progressive ||
+                      currentStep >=
+                        (totalSteps > 0 &&
+                        (!currentSlide.content ||
+                          currentSlide.content.length === 0)
+                          ? 1
+                          : 0)
                         ? 'opacity-100 translate-y-0'
                         : 'opacity-0 translate-y-10'
                     "
                     v-html="currentSlide.title"
                   ></h1>
+
+                  <!-- Icon Support for Title Layout -->
+                  <div
+                    v-if="currentSlide.icon"
+                    class="flex justify-center mb-10 transition-all duration-1000 delay-300"
+                    :class="
+                      !currentSlide.layout.progressive ||
+                      currentStep >=
+                        (totalSteps > 0 &&
+                        (!currentSlide.content ||
+                          currentSlide.content.length === 0)
+                          ? 1
+                          : 0)
+                        ? 'opacity-100 scale-100'
+                        : 'opacity-0 scale-50'
+                    "
+                  >
+                    <div
+                      class="p-8 bg-white/10 backdrop-blur-2xl rounded-[3rem] border border-white/20 shadow-2xl"
+                    >
+                      <component
+                        :is="IconMap[currentSlide.icon]"
+                        class="w-24 h-24 text-orange-400 drop-shadow-[0_0_15px_rgba(251,146,60,0.5)]"
+                      />
+                    </div>
+                  </div>
 
                   <!-- Title Content Items (New) -->
                   <div
@@ -465,8 +541,22 @@ const handleContentClick = (e: MouseEvent) => {
                 <div
                   class="w-full lg:w-[55%] p-12 lg:p-20 flex flex-col justify-center relative z-10"
                 >
+                  <div
+                    v-if="currentSlide.subtitle"
+                    class="inline-block mb-6 px-8 py-3 bg-emerald-600/10 backdrop-blur-xl rounded-full border border-emerald-200/50 shadow-sm transition-all duration-700"
+                    :class="
+                      !currentSlide.layout.progressive || currentStep >= 0
+                        ? 'opacity-100 translate-y-0'
+                        : 'opacity-0 -translate-y-5'
+                    "
+                  >
+                    <span
+                      class="text-xl lg:text-2xl text-emerald-800 font-bold tracking-widest uppercase"
+                      v-html="currentSlide.subtitle"
+                    ></span>
+                  </div>
                   <h2
-                    class="text-5xl lg:text-6xl font-black mb-12 border-l-8 pl-6 leading-tight drop-shadow-sm transition-all duration-700"
+                    class="text-5xl lg:text-6xl font-black mb-12 border-l-8 pl-6 leading-tight drop-shadow-sm transition-all duration-700 flex items-center gap-6"
                     :class="[
                       currentSlide.id === 'consequences-4'
                         ? 'text-red-900 border-red-600'
@@ -475,8 +565,14 @@ const handleContentClick = (e: MouseEvent) => {
                         ? 'opacity-100 translate-y-0'
                         : 'opacity-0 translate-y-5',
                     ]"
-                    v-html="currentSlide.title"
-                  ></h2>
+                  >
+                    <component
+                      v-if="currentSlide.icon"
+                      :is="IconMap[currentSlide.icon]"
+                      class="w-16 h-16 text-orange-500 flex-shrink-0"
+                    />
+                    <span v-html="currentSlide.title"></span>
+                  </h2>
                   <div class="flex flex-col space-y-5 max-w-4xl relative">
                     <div
                       v-for="(item, idx) in currentSlide.content"
@@ -489,9 +585,19 @@ const handleContentClick = (e: MouseEvent) => {
                       "
                     >
                       <div
-                        class="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center shrink-0 border border-emerald-200"
+                        class="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center shrink-0 border border-emerald-200 shadow-inner"
                       >
-                        <CheckCircle2 class="w-8 h-8 text-emerald-600" />
+                        <component
+                          :is="
+                            currentSlide.itemIcons &&
+                            currentSlide.itemIcons[idx]
+                              ? IconMap[currentSlide.itemIcons[idx]]
+                              : currentSlide.icon
+                                ? IconMap[currentSlide.icon]
+                                : CheckCircle2
+                          "
+                          class="w-8 h-8 text-emerald-600"
+                        />
                       </div>
                       <span class="leading-snug flex-1" v-html="item"></span>
                     </div>
@@ -524,7 +630,22 @@ const handleContentClick = (e: MouseEvent) => {
                 <div
                   class="relative z-10 bg-white/90 backdrop-blur-xl p-16 rounded-[3rem] max-w-5xl shadow-2xl border border-white/50 animate-in zoom-in-95 duration-1000"
                 >
-                  <Quote
+                  <div
+                    v-if="currentSlide.subtitle"
+                    class="inline-block mb-6 px-8 py-3 bg-emerald-600/10 backdrop-blur-xl rounded-full border border-emerald-200/50 shadow-sm transition-all duration-700 mx-auto"
+                    :class="
+                      !currentSlide.layout.progressive || currentStep >= 0
+                        ? 'opacity-100 translate-y-0'
+                        : 'opacity-0 -translate-y-5'
+                    "
+                  >
+                    <span
+                      class="text-xl lg:text-2xl text-emerald-800 font-bold tracking-widest uppercase"
+                      v-html="currentSlide.subtitle"
+                    ></span>
+                  </div>
+                  <component
+                    :is="currentSlide.icon ? IconMap[currentSlide.icon] : Quote"
                     class="w-20 h-20 text-orange-400 mx-auto mb-8 opacity-60"
                   />
                   <h2
@@ -564,15 +685,35 @@ const handleContentClick = (e: MouseEvent) => {
                 <div
                   class="w-full lg:w-1/2 p-16 lg:p-24 flex flex-col justify-center"
                 >
+                  <div
+                    v-if="currentSlide.subtitle"
+                    class="inline-block mb-6 px-8 py-3 bg-emerald-600/10 backdrop-blur-xl rounded-full border border-emerald-200/50 shadow-sm transition-all duration-700"
+                    :class="
+                      !currentSlide.layout.progressive || currentStep >= 0
+                        ? 'opacity-100 translate-y-0'
+                        : 'opacity-0 -translate-y-5'
+                    "
+                  >
+                    <span
+                      class="text-xl lg:text-2xl text-emerald-800 font-bold tracking-widest uppercase"
+                      v-html="currentSlide.subtitle"
+                    ></span>
+                  </div>
                   <h2
-                    class="text-5xl lg:text-6xl font-black text-emerald-800 mb-12 leading-tight pr-8 drop-shadow-sm transition-all duration-700"
+                    class="text-5xl lg:text-6xl font-black text-emerald-800 mb-12 leading-tight pr-8 drop-shadow-sm transition-all duration-700 flex items-center gap-6"
                     :class="
                       !currentSlide.layout.progressive || currentStep >= 0
                         ? 'opacity-100 translate-y-0'
                         : 'opacity-0 translate-y-5'
                     "
-                    v-html="currentSlide.title"
-                  ></h2>
+                  >
+                    <component
+                      v-if="currentSlide.icon"
+                      :is="IconMap[currentSlide.icon]"
+                      class="w-16 h-16 text-orange-500 flex-shrink-0"
+                    />
+                    <span v-html="currentSlide.title"></span>
+                  </h2>
                   <div class="space-y-6">
                     <div
                       v-for="(item, idx) in currentSlide.content"
@@ -584,7 +725,29 @@ const handleContentClick = (e: MouseEvent) => {
                           : 'opacity-0 translate-y-10'
                       "
                     >
-                      <span v-html="item"></span>
+                      <div class="flex items-center gap-6">
+                        <div
+                          v-if="
+                            (currentSlide.itemIcons &&
+                              currentSlide.itemIcons[idx]) ||
+                            currentSlide.icon
+                          "
+                          class="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center shrink-0 shadow-sm"
+                        >
+                          <component
+                            :is="
+                              IconMap[
+                                currentSlide.itemIcons &&
+                                currentSlide.itemIcons[idx]
+                                  ? currentSlide.itemIcons[idx]
+                                  : currentSlide.icon
+                              ]
+                            "
+                            class="w-10 h-10 text-orange-600"
+                          />
+                        </div>
+                        <span v-html="item"></span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -602,15 +765,35 @@ const handleContentClick = (e: MouseEvent) => {
                 v-else-if="currentSlide.layout.type === 'image-grid'"
                 class="flex flex-col p-12 lg:p-16 h-full bg-emerald-50 justify-center w-full relative"
               >
+                <div
+                  v-if="currentSlide.subtitle"
+                  class="inline-block mb-6 px-8 py-3 bg-emerald-600/10 backdrop-blur-xl rounded-full border border-emerald-200/50 shadow-sm transition-all duration-700 mx-auto"
+                  :class="
+                    !currentSlide.layout.progressive || currentStep >= 0
+                      ? 'opacity-100 translate-y-0'
+                      : 'opacity-0 -translate-y-5'
+                  "
+                >
+                  <span
+                    class="text-xl lg:text-2xl text-emerald-800 font-bold tracking-widest uppercase"
+                    v-html="currentSlide.subtitle"
+                  ></span>
+                </div>
                 <h2
-                  class="text-5xl lg:text-6xl font-black text-emerald-800 mb-12 text-center z-10 tracking-tight drop-shadow-sm transition-all duration-700"
+                  class="text-5xl lg:text-6xl font-black text-emerald-800 mb-12 text-center z-10 tracking-tight drop-shadow-sm transition-all duration-700 flex items-center justify-center gap-6"
                   :class="
                     !currentSlide.layout.progressive || currentStep >= 0
                       ? 'opacity-100 translate-y-0'
                       : 'opacity-0 translate-y-5'
                   "
-                  v-html="currentSlide.title"
-                ></h2>
+                >
+                  <component
+                    v-if="currentSlide.icon"
+                    :is="IconMap[currentSlide.icon]"
+                    class="w-16 h-16 text-orange-500 flex-shrink-0"
+                  />
+                  <span v-html="currentSlide.title"></span>
+                </h2>
                 <div
                   class="grid grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto w-full z-10"
                 >
@@ -673,9 +856,28 @@ const handleContentClick = (e: MouseEvent) => {
                   <div
                     class="w-full lg:w-1/2 p-8 text-center lg:text-left z-10"
                   >
-                    <h2
-                      class="text-6xl lg:text-7xl font-black mb-8 text-emerald-800 leading-tight border-l-8 border-orange-500 pl-6"
+                    <div
+                      v-if="currentSlide.subtitle"
+                      class="inline-block mb-6 px-8 py-3 bg-emerald-600/10 backdrop-blur-xl rounded-full border border-emerald-200/50 shadow-sm transition-all duration-700"
+                      :class="
+                        !currentSlide.layout.progressive || currentStep >= 0
+                          ? 'opacity-100 translate-y-0'
+                          : 'opacity-0 -translate-y-5'
+                      "
                     >
+                      <span
+                        class="text-xl lg:text-2xl text-emerald-800 font-bold tracking-widest uppercase"
+                        v-html="currentSlide.subtitle"
+                      ></span>
+                    </div>
+                    <h2
+                      class="text-6xl lg:text-7xl font-black mb-8 text-emerald-800 leading-tight border-l-8 border-orange-500 pl-6 flex items-center gap-6"
+                    >
+                      <component
+                        v-if="currentSlide.icon"
+                        :is="IconMap[currentSlide.icon]"
+                        class="w-16 h-16 text-orange-500 flex-shrink-0"
+                      />
                       {{ currentSlide.title }}
                     </h2>
                     <p
@@ -695,44 +897,130 @@ const handleContentClick = (e: MouseEvent) => {
                     </p>
                   </div>
                   <div
-                    class="w-full lg:w-1/2 h-[500px] relative mt-12 lg:mt-0 flex items-center justify-center bg-white rounded-[3rem] shadow-2xl border border-slate-100 p-10 transition-all duration-1000"
+                    class="w-full lg:w-1/2 h-[500px] relative mt-12 lg:mt-0 flex items-center justify-center bg-white/80 backdrop-blur-xl rounded-[3rem] shadow-2xl border border-white/50 p-10 transition-all duration-1000"
                     :class="
                       currentStep > 1
                         ? 'opacity-100 scale-100'
                         : 'opacity-0 scale-90'
                     "
                   >
+                    <!-- Decorative Background Glow -->
+                    <div
+                      class="absolute w-64 h-64 bg-emerald-400/20 blur-[100px] rounded-full pointer-events-none"
+                    ></div>
+                    <div
+                      class="absolute w-48 h-48 bg-orange-400/20 blur-[80px] rounded-full translate-x-20 -translate-y-10 pointer-events-none"
+                    ></div>
+
                     <svg
                       viewBox="0 0 400 400"
-                      class="w-[80%] h-[80%] -rotate-90"
+                      class="w-[85%] h-[85%] -rotate-90 drop-shadow-xl"
                     >
+                      <defs>
+                        <filter
+                          id="glow"
+                          x="-20%"
+                          y="-20%"
+                          width="140%"
+                          height="140%"
+                        >
+                          <feGaussianBlur stdDeviation="8" result="blur" />
+                          <feComposite
+                            in="SourceGraphic"
+                            in2="blur"
+                            operator="over"
+                          />
+                        </filter>
+                        <linearGradient
+                          id="orangeGradient"
+                          x1="0%"
+                          y1="0%"
+                          x2="100%"
+                          y2="0%"
+                        >
+                          <stop
+                            offset="0%"
+                            style="stop-color: #fb923c; stop-opacity: 1"
+                          />
+                          <stop
+                            offset="100%"
+                            style="stop-color: #f97316; stop-opacity: 1"
+                          />
+                        </linearGradient>
+                      </defs>
+                      <!-- Base Circle (Green - 80%) -->
                       <circle
                         cx="200"
                         cy="200"
                         r="160"
                         fill="none"
                         stroke="#34d399"
-                        stroke-width="50"
-                        stroke-dasharray="1005 1005"
+                        stroke-width="48"
+                        stroke-linecap="round"
+                        stroke-dasharray="1005.3"
+                        :stroke-dashoffset="currentStep > 1 ? 0 : 1005.3"
+                        class="transition-all duration-[1.5s] ease-in-out opacity-10"
                       />
                       <circle
                         cx="200"
                         cy="200"
                         r="160"
                         fill="none"
-                        stroke="#fb923c"
-                        stroke-width="50"
-                        stroke-dasharray="201 1005"
+                        stroke="#34d399"
+                        stroke-width="48"
+                        stroke-linecap="round"
+                        stroke-dasharray="804.24 1005.3"
+                        :stroke-dashoffset="currentStep > 1 ? -201.06 : 804.24"
+                        class="transition-all duration-[1.5s] ease-in-out delay-300"
+                      />
+                      <!-- Highlight Segment (Orange - 20%) -->
+                      <circle
+                        cx="200"
+                        cy="200"
+                        r="160"
+                        fill="none"
+                        stroke="url(#orangeGradient)"
+                        stroke-width="52"
+                        stroke-linecap="round"
+                        stroke-dasharray="201.06 1005.3"
+                        :stroke-dashoffset="currentStep > 1 ? 0 : 201.06"
+                        class="transition-all duration-[1.2s] ease-[cubic-bezier(0.34,1.56,0.64,1)] delay-150"
+                        filter="url(#glow)"
                       />
                     </svg>
                     <div
-                      class="absolute flex flex-col items-center justify-center inset-0 pointer-events-none"
+                      class="absolute flex flex-col items-center justify-center inset-0 pointer-events-none transition-all duration-1000"
+                      :class="
+                        currentStep > 1
+                          ? 'opacity-100 scale-100 translate-y-0'
+                          : 'opacity-0 scale-50 translate-y-8'
+                      "
                     >
-                      <BrainCircuit class="w-20 h-20 text-emerald-600 mb-2" />
-                      <span
-                        class="text-6xl font-black text-slate-800 drop-shadow-md"
-                        >20%</span
+                      <div
+                        class="bg-emerald-50 p-6 rounded-full shadow-lg border border-emerald-100 mb-4 animate-bounce-subtle"
                       >
+                        <component
+                          :is="
+                            currentSlide.icon
+                              ? IconMap[currentSlide.icon]
+                              : BrainCircuit
+                          "
+                          class="w-16 h-16 text-emerald-600"
+                        />
+                      </div>
+                      <div class="flex flex-col items-center">
+                        <span
+                          class="text-7xl font-black text-slate-800 tracking-tighter drop-shadow-md"
+                        >
+                          20<span class="text-orange-500 font-extrabold"
+                            >%</span
+                          >
+                        </span>
+                        <span
+                          class="text-slate-400 font-bold uppercase tracking-[0.2em] text-sm mt-1"
+                          >Energy usage</span
+                        >
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -749,9 +1037,28 @@ const handleContentClick = (e: MouseEvent) => {
                       class-name="w-full h-full object-cover"
                     />
                   </div>
-                  <h2
-                    class="text-6xl md:text-7xl font-black mb-24 tracking-tight text-emerald-900 text-center drop-shadow-sm z-10"
+                  <div
+                    v-if="currentSlide.subtitle"
+                    class="inline-block mb-6 px-8 py-3 bg-emerald-600/10 backdrop-blur-xl rounded-full border border-emerald-200/50 shadow-sm transition-all duration-700 z-10"
+                    :class="
+                      !currentSlide.layout.progressive || currentStep >= 0
+                        ? 'opacity-100 translate-y-0'
+                        : 'opacity-0 -translate-y-5'
+                    "
                   >
+                    <span
+                      class="text-xl lg:text-2xl text-emerald-800 font-bold tracking-widest uppercase"
+                      v-html="currentSlide.subtitle"
+                    ></span>
+                  </div>
+                  <h2
+                    class="text-6xl md:text-7xl font-black mb-24 tracking-tight text-emerald-900 text-center drop-shadow-sm z-10 flex items-center gap-6"
+                  >
+                    <component
+                      v-if="currentSlide.icon"
+                      :is="IconMap[currentSlide.icon]"
+                      class="w-16 h-16 text-orange-500"
+                    />
                     {{ currentSlide.title }}
                   </h2>
                   <div
@@ -807,65 +1114,294 @@ const handleContentClick = (e: MouseEvent) => {
                     <span>BRAIN CAPACITY: 20%</span>
                   </div>
                 </div>
+              </div>
 
-                <!-- GlitchEffect (Cyberpunk Style Error) -->
-                <div
-                  v-if="currentSlide.layout.component === 'GlitchEffect'"
-                  class="flex flex-col items-center justify-center h-full bg-slate-900 w-full p-20 relative"
-                >
+              <!-- InsightCanvas (Integrated Recap Dashboard) -->
+              <!-- InsightCanvas (Big Picture Mind Map) -->
+              <div
+                v-else-if="currentSlide.layout.type === 'InsightCanvas'"
+                class="relative h-full w-full bg-slate-900 overflow-hidden flex flex-col items-center justify-center p-12"
+              >
+                <!-- Neural Network Background -->
+                <div class="absolute inset-0 z-0">
                   <div
-                    class="absolute inset-0 opacity-20 pointer-events-none grayscale contrast-125"
-                  >
-                    <PremiumImage
-                      :src="getSlideImage(currentSlide.id)"
-                      alt=""
-                      class-name="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div class="relative group">
-                    <h2
-                      class="text-7xl md:text-9xl font-black text-white relative z-10 animate-pulse tracking-tighter"
+                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border border-emerald-500/10 rounded-full animate-[ping_10s_linear_infinite]"
+                  ></div>
+                  <div
+                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-blue-500/10 rounded-full animate-[ping_7s_linear_infinite]"
+                  ></div>
+                </div>
+
+                <div
+                  class="relative z-10 w-full max-w-7xl flex flex-col items-center"
+                >
+                  <!-- Header Area -->
+                  <div class="text-center mb-16 space-y-4">
+                    <div
+                      class="inline-block px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-mono tracking-[0.3em] uppercase animate-pulse"
                     >
+                      [ Brain State Awareness ]
+                    </div>
+                    <h2
+                      class="text-6xl lg:text-7xl font-black text-white tracking-tighter flex items-center justify-center gap-6"
+                    >
+                      <div
+                        class="p-4 bg-emerald-500 rounded-3xl shadow-[0_0_50px_rgba(16,185,129,0.3)]"
+                      >
+                        <component
+                          :is="IconMap[currentSlide.icon] || BrainCircuit"
+                          class="w-12 h-12 text-white"
+                        />
+                      </div>
                       {{ currentSlide.title }}
                     </h2>
-                    <div
-                      class="absolute inset-0 text-orange-500 blur-sm opacity-50 translate-x-1 translate-y-1 animate-pulse select-none"
-                    >
-                      {{ currentSlide.title }}
+                  </div>
+
+                  <!-- Mind Map Container -->
+                  <div
+                    class="relative w-full h-[600px] flex items-center justify-center"
+                  >
+                    <!-- Central Core -->
+                    <div class="relative z-20 group">
+                      <div
+                        class="absolute inset-0 bg-emerald-500 rounded-full blur-[100px] opacity-20 group-hover:opacity-40 transition-opacity"
+                      ></div>
+                      <div
+                        class="relative w-56 h-56 bg-slate-800 rounded-[3rem] border-2 border-emerald-500/50 shadow-2xl flex flex-col items-center justify-center overflow-hidden"
+                      >
+                        <div class="absolute inset-0 opacity-40">
+                          <PremiumImage
+                            :src="getSlideImage(currentSlide.id)"
+                            class-name="w-full h-full object-cover grayscale scale-110 group-hover:scale-125 transition-transform duration-[10s]"
+                          />
+                        </div>
+                        <div
+                          class="relative z-10 text-center p-4 bg-slate-900/60 backdrop-blur-md rounded-2xl border border-white/10 mx-4"
+                        >
+                          <span
+                            class="text-emerald-400 font-mono text-[9px] block mb-1 uppercase tracking-widest"
+                            >Core Insight</span
+                          >
+                          <span
+                            class="text-white font-black text-xl tracking-tight leading-none uppercase"
+                            >Full Recap</span
+                          >
+                        </div>
+                      </div>
                     </div>
+
+                    <!-- Knowledge Nodes -->
                     <div
-                      class="absolute inset-0 text-red-500 blur-md opacity-30 -translate-x-1 -translate-y-1 animate-pulse select-none"
+                      v-for="(pos, idx) in [
+                        {
+                          x: '-380px',
+                          y: '-180px',
+                          color: 'emerald',
+                          hex: '#10b981',
+                        },
+                        {
+                          x: '380px',
+                          y: '-180px',
+                          color: 'blue',
+                          hex: '#3b82f6',
+                        },
+                        {
+                          x: '-380px',
+                          y: '180px',
+                          color: 'orange',
+                          hex: '#f59e0b',
+                        },
+                        {
+                          x: '380px',
+                          y: '180px',
+                          color: 'red',
+                          hex: '#ef4444',
+                        },
+                      ]"
+                      :key="idx"
+                      class="absolute transition-all duration-1000"
+                      :style="{
+                        transform: `translate(${pos.x}, ${pos.y})`,
+                        opacity: currentStep >= idx ? 1 : 0,
+                        transitionDelay: `${idx * 150}ms`,
+                      }"
                     >
-                      {{ currentSlide.title }}
+                      <!-- Visual Connection -->
+                      <svg
+                        class="absolute top-1/2 left-1/2 w-[400px] h-[400px] pointer-events-none overflow-visible z-0"
+                        style="transform: translate(-50%, -50%)"
+                      >
+                        <line
+                          x1="0"
+                          y1="0"
+                          :x2="-parseInt(pos.x)"
+                          :y2="-parseInt(pos.y)"
+                          :stroke="pos.hex"
+                          stroke-width="1"
+                          stroke-dasharray="6 6"
+                          class="opacity-30 animate-dash"
+                        />
+                      </svg>
+
+                      <!-- Node Card -->
+                      <div
+                        class="relative w-[340px] bg-slate-800/80 backdrop-blur-3xl p-8 rounded-[2.5rem] border border-white/10 shadow-2xl group hover:-translate-y-2 transition-all duration-500 z-10"
+                      >
+                        <div
+                          class="absolute top-6 right-8 w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner border border-white/10 shadow-inner"
+                          :class="`bg-${pos.color}-500/10 text-${pos.color}-400`"
+                        >
+                          <component
+                            :is="
+                              IconMap[currentSlide.itemIcons[idx]] ||
+                              CheckCircle2
+                            "
+                            class="w-8 h-8"
+                          />
+                        </div>
+                        <div class="space-y-4">
+                          <div class="flex items-center gap-3">
+                            <div
+                              class="w-2.5 h-2.5 rounded-full"
+                              :class="`bg-${pos.color}-500`"
+                              :style="{ boxShadow: `0 0 15px ${pos.hex}` }"
+                            ></div>
+                            <span
+                              class="font-mono text-[10px] uppercase tracking-[0.3em] font-bold"
+                              :class="`text-${pos.color}-400`"
+                              >{{
+                                idx < 2 ? "Logic Node" : "Physical Node"
+                              }}</span
+                            >
+                          </div>
+                          <p
+                            class="text-2xl font-bold text-white leading-tight"
+                            v-html="currentSlide.content[idx]"
+                          ></p>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div class="mt-16 flex flex-col space-y-6 max-w-4xl">
+                </div>
+              </div>
+
+              <!-- GlitchEffect (Cyberpunk Style Error) -->
+              <div
+                v-else-if="currentSlide.layout.type === 'GlitchEffect'"
+                class="flex flex-col items-center justify-center h-full bg-black w-full p-20 relative overflow-hidden"
+              >
+                <!-- Background Image with Matrix-like Treatment -->
+                <div
+                  class="absolute inset-0 opacity-15 pointer-events-none grayscale contrast-150 scale-110 blur-[2px]"
+                >
+                  <PremiumImage
+                    :src="getSlideImage(currentSlide.id)"
+                    alt=""
+                    class-name="w-full h-full object-cover"
+                  />
+                </div>
+
+                <!-- Overlays -->
+                <div class="scanline-overlay"></div>
+                <div class="vignette"></div>
+
+                <!-- Alert Content -->
+                <div class="relative z-30 flex flex-col items-center">
+                  <!-- Subtitle/Category -->
+                  <div
+                    v-if="currentSlide.subtitle"
+                    class="mb-8 px-6 py-2 bg-red-600/20 text-red-500 font-mono text-sm tracking-[0.5em] border border-red-500/30 animate-pulse uppercase"
+                    :class="
+                      !currentSlide.layout.progressive || currentStep >= 0
+                        ? 'opacity-100'
+                        : 'opacity-0'
+                    "
+                  >
+                    [ {{ currentSlide.subtitle }} ]
+                  </div>
+
+                  <!-- Main Glitch Title -->
+                  <div class="relative mb-12 flex flex-col items-center">
+                    <h2
+                      class="text-5xl md:text-7xl font-black text-white tracking-tighter uppercase glitch-text flex flex-col md:flex-row items-center gap-6 text-center drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]"
+                      :data-text="currentSlide.title"
+                    >
+                      <component
+                        v-if="currentSlide.icon"
+                        :is="IconMap[currentSlide.icon]"
+                        class="w-12 h-12 text-red-500 mb-4 md:mb-0"
+                      />
+                      {{ currentSlide.title }}
+                    </h2>
+                  </div>
+
+                  <!-- Terminal Style Content Blocks -->
+                  <div class="flex flex-col space-y-4 w-full max-w-4xl">
                     <div
                       v-for="(item, idx) in currentSlide.content"
                       :key="idx"
-                      class="bg-red-600/10 px-10 py-5 rounded-2xl border border-red-500/30 backdrop-blur-md transition-all duration-500"
+                      class="group relative overflow-hidden transition-all duration-300"
                       :class="
                         currentStep > idx
-                          ? 'opacity-100 translate-x-0'
-                          : 'opacity-0 -translate-x-10'
+                          ? 'opacity-100 translate-y-0'
+                          : 'opacity-0 translate-y-10'
                       "
                     >
-                      <span
-                        class="text-red-400 font-mono text-2xl lg:text-3xl font-bold uppercase tracking-widest block mb-2"
-                        v-if="idx < 2"
+                      <div
+                        class="absolute inset-0 bg-red-600/5 group-hover:bg-red-600/10 transition-colors"
+                      ></div>
+                      <div
+                        class="absolute left-0 top-0 bottom-0 w-1 bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.5)]"
+                      ></div>
+
+                      <div
+                        class="relative px-8 py-6 border border-white/5 backdrop-blur-sm"
                       >
-                        > [CRITICAL_ERR]
-                      </span>
-                      <span
-                        class="text-white font-mono text-2xl lg:text-3xl font-bold"
-                        :class="
-                          idx === 2
-                            ? 'text-orange-400 border-l-4 border-orange-500 pl-6'
-                            : ''
-                        "
-                        v-html="item"
-                      ></span>
+                        <div class="flex items-start gap-4">
+                          <span
+                            class="text-red-500 font-mono text-lg opacity-80 mt-1"
+                            >>></span
+                          >
+                          <div class="flex flex-col">
+                            <span
+                              class="text-red-500/60 font-mono text-xs uppercase tracking-widest mb-1"
+                            >
+                              [{{
+                                idx === 2
+                                  ? "CORE_ADVICE"
+                                  : "CRITICAL_ERR_0" + (idx + 1)
+                              }}]
+                            </span>
+                            <span
+                              class="text-white font-mono text-xl lg:text-3xl font-medium leading-tight"
+                              :class="idx === 2 ? 'text-orange-400' : ''"
+                              v-html="item"
+                            ></span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Glitch line decoration -->
+                      <div
+                        v-if="currentStep > idx"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 opacity-20 group-hover:opacity-100 transition-opacity"
+                      >
+                        <div
+                          class="h-[1px] w-12 bg-red-500 animate-pulse"
+                        ></div>
+                      </div>
                     </div>
+                  </div>
+
+                  <!-- Footer System Log (Extra detail) -->
+                  <div
+                    class="mt-12 font-mono text-[10px] text-white/30 tracking-widest uppercase flex gap-8"
+                  >
+                    <span>CPU_LOAD: CRITICAL</span>
+                    <span>//</span>
+                    <span>MEM_STATE: OVERFLOW</span>
+                    <span>//</span>
+                    <span>REF: CHITHANH_ENG03</span>
                   </div>
                 </div>
               </div>
@@ -1075,5 +1611,186 @@ const handleContentClick = (e: MouseEvent) => {
   text-decoration: underline !important;
   text-decoration-color: rgba(253, 186, 116, 0.5) !important;
   text-underline-offset: 4px !important;
+}
+
+@keyframes bounce-subtle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+.animate-bounce-subtle {
+  animation: bounce-subtle 3s ease-in-out infinite;
+}
+
+/* HIGH-END GLITCH EFFECTS */
+@keyframes glitch-skew {
+  0% {
+    transform: skew(0deg);
+  }
+  20% {
+    transform: skew(3deg);
+  }
+  24% {
+    transform: skew(-3deg);
+  }
+  28% {
+    transform: skew(0deg);
+  }
+  70% {
+    transform: skew(0deg);
+  }
+  71% {
+    transform: skew(-10deg);
+  }
+  72% {
+    transform: skew(10deg);
+  }
+  73% {
+    transform: skew(0deg);
+  }
+  100% {
+    transform: skew(0deg);
+  }
+}
+
+@keyframes glitch-anim {
+  0% {
+    clip: rect(20px, 9999px, 21px, 0);
+    transform: translateX(0);
+  }
+  2% {
+    clip: rect(80px, 9999px, 85px, 0);
+    transform: translateX(-5px);
+  }
+  4% {
+    clip: rect(10px, 9999px, 15px, 0);
+    transform: translateX(5px);
+  }
+  6% {
+    clip: rect(20px, 9999px, 21px, 0);
+    transform: translateX(0);
+  }
+  100% {
+    clip: rect(20px, 9999px, 21px, 0);
+    transform: translateX(0);
+  }
+}
+
+@keyframes glitch-anim-2 {
+  0% {
+    clip: rect(50px, 9999px, 52px, 0);
+    transform: translateX(0);
+  }
+  3% {
+    clip: rect(10px, 9999px, 12px, 0);
+    transform: translateX(5px);
+  }
+  6% {
+    clip: rect(90px, 9999px, 95px, 0);
+    transform: translateX(-5px);
+  }
+  9% {
+    clip: rect(50px, 9999px, 52px, 0);
+    transform: translateX(0);
+  }
+  100% {
+    clip: rect(50px, 9999px, 52px, 0);
+    transform: translateX(0);
+  }
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.8;
+}
+
+.glitch-text::before {
+  left: 3px;
+  text-shadow: -2px 0 #ff00c1;
+  animation: glitch-anim 4s infinite linear alternate-reverse;
+}
+
+.glitch-text::after {
+  left: -3px;
+  text-shadow: 2px 0 #00fff9;
+  animation: glitch-anim-2 3s infinite linear alternate-reverse;
+}
+
+.scanline-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+    linear-gradient(
+      90deg,
+      rgba(255, 0, 0, 0.06),
+      rgba(0, 255, 0, 0.02),
+      rgba(0, 0, 255, 0.06)
+    );
+  background-size:
+    100% 4px,
+    3px 100%;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.vignette {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+  z-index: 21;
+}
+
+@keyframes flash {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  52% {
+    opacity: 1;
+  }
+  54% {
+    opacity: 0.7;
+  }
+  56% {
+    opacity: 1;
+  }
+}
+
+.animate-flash-fast {
+  animation: flash 0.2s steps(2) infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }
 </style>
