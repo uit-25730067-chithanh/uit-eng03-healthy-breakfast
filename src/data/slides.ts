@@ -11,7 +11,10 @@ export interface SlideLayout {
     | "component"
     | "InsightCanvas"
     | "GlitchEffect"
-    | "team";
+    | "team"
+    | "consequences-bullets"
+    | "consequences-quote"
+    | "consequences-split";
   component?: string;
   progressive?: boolean;
 }
@@ -235,7 +238,7 @@ export const rawSlides: SlideData[] = [
     content: ["7 AM class – Coffee only"],
     itemIcons: ["Coffee"],
     script: slideScripts["consequences-1"],
-    layout: { type: "split", progressive: true },
+    layout: { type: "consequences-split", progressive: true },
   },
   {
     id: "consequences-2",
@@ -248,7 +251,7 @@ export const rawSlides: SlideData[] = [
       "The brain is an organ <span class='grammar-focus'>which</span> needs a constant supply of glucose.",
     ],
     script: slideScripts["consequences-2"],
-    layout: { type: "bullets", progressive: true },
+    layout: { type: "consequences-bullets", progressive: true },
   },
   {
     id: "consequences-3",
@@ -258,7 +261,7 @@ export const rawSlides: SlideData[] = [
     content: ["Skip → Starving → Overeating", "Junk food cycle"],
     itemIcons: ["ZapOff", "Utensils"],
     script: slideScripts["consequences-3"],
-    layout: { type: "bullets", progressive: true },
+    layout: { type: "consequences-bullets", progressive: true },
   },
   {
     id: "consequences-4",
@@ -272,7 +275,7 @@ export const rawSlides: SlideData[] = [
     ],
     itemIcons: ["Activity", "Heart", "CheckCircle2"],
     script: slideScripts["consequences-4"],
-    layout: { type: "bullets", progressive: true },
+    layout: { type: "consequences-bullets", progressive: true },
   },
   {
     id: "consequences-5",
@@ -280,7 +283,7 @@ export const rawSlides: SlideData[] = [
     speaker: "Hoàng Sơn",
     content: ["Energy loss", "Focus, mood, and productivity loss"],
     script: slideScripts["consequences-5"],
-    layout: { type: "quote", progressive: true },
+    layout: { type: "consequences-quote", progressive: true },
   },
 
   // SECTION 5: TIPS (Đức Ý)
