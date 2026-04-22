@@ -1,7 +1,8 @@
+import membersData from "./members.json";
 import { slideScripts } from "./scripts";
 
 export interface SlideLayout {
-  type: "title" | "bullets" | "quote" | "split" | "image-grid" | "component" | "InsightCanvas" | "GlitchEffect";
+  type: "title" | "bullets" | "quote" | "split" | "image-grid" | "component" | "InsightCanvas" | "GlitchEffect" | "team";
   component?: string;
   progressive?: boolean;
 }
@@ -35,15 +36,12 @@ export const rawSlides: SlideData[] = [
     title: "Our Team",
     speaker: "Thanh Hải",
     icon: "Users",
-    content: [
-      "Thanh Hải (Leader)",
-      "Chí Thanh",
-      "Đức Ý",
-      "Phước Thịnh",
-      "Hoàng Sơn",
-    ],
+    content: [],
     script: slideScripts["intro-2"],
-    layout: { type: "bullets", progressive: true },
+    layout: { type: "team", progressive: true },
+    meta: {
+      members: membersData
+    }
   },
   {
     id: "intro-3",
