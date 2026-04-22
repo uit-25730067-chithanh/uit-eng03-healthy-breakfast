@@ -79,7 +79,8 @@ watch(currentStep, (newStep) => {
 
 const isFullscreenMode = ref(false);
 const baseUrl = import.meta.env.BASE_URL;
-const IMAGE_BASE_URL = 'https://uit-25730067-chithanh.github.io/uit-eng03-healthy-breakfast/';
+const IMAGE_BASE_URL =
+  "https://uit-25730067-chithanh.github.io/uit-eng03-healthy-breakfast/";
 
 // --- PRELOADING MECHANISM ---
 const preloadedImages = new Set<string>();
@@ -681,6 +682,113 @@ const handleContentClick = (e: MouseEvent) => {
                 </div>
               </div>
 
+              <!-- CONSEQUENCES BULLETS LAYOUT (Dark Theme) -->
+              <div
+                v-else-if="currentSlide.layout.type === 'consequences-bullets'"
+                class="flex flex-col lg:flex-row h-full w-full transition-colors duration-1000 relative overflow-hidden"
+              >
+                <!-- Dark Background Decoration -->
+                <div
+                  class="absolute inset-0 pointer-events-none overflow-hidden bg-zinc-900 z-0"
+                >
+                  <div
+                    class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(153,27,27,0.15)_0%,transparent_50%)]"
+                  ></div>
+                  <div
+                    class="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-red-900/10 rounded-full blur-[100px] animate-pulse duration-[10s]"
+                  ></div>
+                  <div
+                    class="absolute bottom-[-10%] right-[10%] w-[50%] h-[50%] bg-zinc-900/50 rounded-full blur-[120px] animate-pulse duration-[12s] [animation-delay:2s]"
+                  ></div>
+
+                  <!-- Scanline effect for more "serious" feel -->
+                  <div
+                    class="absolute inset-0 opacity-[0.03] pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-1 bg-[length:100%_2px,3px_100%]"
+                  ></div>
+
+                  <!-- Grainy Overlay -->
+                  <div
+                    class="absolute inset-0 opacity-[0.2] mix-blend-overlay"
+                    style="
+                      background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E&quot;);
+                    "
+                  ></div>
+                </div>
+
+                <div
+                  class="w-full lg:w-[55%] p-12 lg:p-20 flex flex-col justify-center relative z-10"
+                >
+                  <div
+                    v-if="currentSlide.subtitle"
+                    class="inline-block mb-6 px-8 py-3 bg-red-950/40 backdrop-blur-xl rounded-full border border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.1)] transition-all duration-700"
+                    :class="
+                      !currentSlide.layout.progressive || currentStep >= 0
+                        ? 'opacity-100 translate-y-0'
+                        : 'opacity-0 -translate-y-5'
+                    "
+                  >
+                    <span
+                      class="text-xl lg:text-2xl text-red-400 font-bold tracking-widest uppercase"
+                      v-html="currentSlide.subtitle"
+                    ></span>
+                  </div>
+                  <h2
+                    class="text-5xl lg:text-6xl font-black mb-12 border-l-8 pl-6 leading-tight transition-all duration-700 flex items-center gap-6 text-white border-red-600 drop-shadow-[0_0_10px_rgba(220,38,38,0.3)]"
+                    :class="
+                      !currentSlide.layout.progressive || currentStep >= 0
+                        ? 'opacity-100 translate-y-0'
+                        : 'opacity-0 translate-y-5'
+                    "
+                  >
+                    <component
+                      v-if="currentSlide.icon"
+                      :is="IconMap[currentSlide.icon]"
+                      class="w-16 h-16 text-red-500 flex-shrink-0"
+                    />
+                    <span v-html="currentSlide.title"></span>
+                  </h2>
+                  <div class="flex flex-col space-y-5 max-w-4xl relative">
+                    <div
+                      v-for="(item, idx) in currentSlide.content"
+                      :key="idx"
+                      class="flex items-center space-x-6 bg-zinc-900/50 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.2)] border border-white/5 p-5 rounded-3xl text-2xl lg:text-3xl text-zinc-300 font-semibold transition-all duration-500"
+                      :class="
+                        !currentSlide.layout.progressive || currentStep > idx
+                          ? 'opacity-100 translate-x-0 border-red-500/20'
+                          : 'opacity-0 -translate-x-10'
+                      "
+                    >
+                      <div
+                        class="w-14 h-14 bg-red-950/50 rounded-full flex items-center justify-center shrink-0 border border-red-500/30 shadow-[inset_0_0_10px_rgba(220,38,38,0.2)]"
+                      >
+                        <component
+                          :is="
+                            currentSlide.itemIcons &&
+                            currentSlide.itemIcons[idx]
+                              ? IconMap[currentSlide.itemIcons[idx]]
+                              : currentSlide.icon
+                                ? IconMap[currentSlide.icon]
+                                : AlertTriangle
+                          "
+                          class="w-8 h-8 text-red-500"
+                        />
+                      </div>
+                      <span class="leading-snug flex-1" v-html="item"></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="w-[45%] relative hidden lg:block p-10">
+                  <div
+                    class="absolute inset-0 bg-red-600/5 blur-[100px] z-0"
+                  ></div>
+                  <PremiumImage
+                    :src="getSlideImage(currentSlide.id)"
+                    alt="Consequence"
+                    class-name="w-full h-full object-cover object-center rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 brightness-90 contrast-110"
+                  />
+                </div>
+              </div>
+
               <!-- QUOTE LAYOUT -->
               <div
                 v-else-if="currentSlide.layout.type === 'quote'"
@@ -751,6 +859,79 @@ const handleContentClick = (e: MouseEvent) => {
                         )
                           ? 'text-white'
                           : 'text-emerald-800/80',
+                        !currentSlide.layout.progressive || currentStep > idx
+                          ? 'opacity-100 translate-y-0'
+                          : 'opacity-0 translate-y-5',
+                      ]"
+                      v-html="item"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- CONSEQUENCES QUOTE LAYOUT (Dark Theme) -->
+              <div
+                v-else-if="currentSlide.layout.type === 'consequences-quote'"
+                class="flex items-center justify-center p-16 h-full bg-zinc-900 text-center relative overflow-hidden w-full"
+              >
+                <!-- Background Decoration -->
+                <div class="absolute inset-0 z-0">
+                  <div
+                    class="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(153,27,27,0.1)_0%,transparent_70%)]"
+                  ></div>
+                  <PremiumImage
+                    :src="getSlideImage(currentSlide.id)"
+                    alt="Background"
+                    class-name="w-full h-full object-cover rounded-[4rem] shadow-2xl opacity-60 contrast-110"
+                  />
+                  <!-- Dark Red Overlay -->
+                  <div
+                    class="absolute inset-0 bg-gradient-to-b from-zinc-900/70 via-zinc-900/30 to-zinc-900/80 backdrop-blur-[1px]"
+                  ></div>
+                </div>
+
+                <div class="relative z-10 w-full max-w-5xl">
+                  <div
+                    v-if="currentSlide.subtitle"
+                    class="inline-block mb-6 px-8 py-3 bg-red-950/40 backdrop-blur-xl rounded-full border border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.1)] transition-all duration-700"
+                    :class="
+                      !currentSlide.layout.progressive || currentStep >= 0
+                        ? 'opacity-100 translate-y-0'
+                        : 'opacity-0 -translate-y-5'
+                    "
+                  >
+                    <span
+                      class="text-xl lg:text-2xl text-red-400 font-bold tracking-widest uppercase"
+                      v-html="currentSlide.subtitle"
+                    ></span>
+                  </div>
+                  <component
+                    :is="
+                      currentSlide.icon
+                        ? IconMap[currentSlide.icon]
+                        : AlertCircle
+                    "
+                    class="w-20 h-20 text-red-500 mx-auto mb-8 opacity-80 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]"
+                  />
+                  <h2
+                    class="font-bold italic transition-all duration-700 text-white text-6xl md:text-7xl lg:text-8xl leading-tight drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]"
+                    :class="[
+                      !currentSlide.layout.progressive || currentStep >= 0
+                        ? 'opacity-100 translate-y-0'
+                        : 'opacity-0 translate-y-5',
+                    ]"
+                  >
+                    &ldquo;<span v-html="currentSlide.title"></span>&rdquo;
+                  </h2>
+                  <div
+                    v-if="currentSlide.content.length > 0"
+                    class="mt-12 space-y-8"
+                  >
+                    <div
+                      v-for="(item, idx) in currentSlide.content"
+                      :key="idx"
+                      class="text-2xl md:text-3xl font-medium transition-all duration-700 text-zinc-300 drop-shadow-md"
+                      :class="[
                         !currentSlide.layout.progressive || currentStep > idx
                           ? 'opacity-100 translate-y-0'
                           : 'opacity-0 translate-y-5',
@@ -840,6 +1021,102 @@ const handleContentClick = (e: MouseEvent) => {
                     :src="getSlideImage(currentSlide.id)"
                     alt="Context"
                     class-name="w-full h-full object-cover rounded-[3rem] shadow-2xl"
+                  />
+                </div>
+              </div>
+
+              <!-- CONSEQUENCES SPLIT LAYOUT (Dark Theme) -->
+              <div
+                v-else-if="currentSlide.layout.type === 'consequences-split'"
+                class="flex flex-col lg:flex-row h-full w-full bg-zinc-900"
+              >
+                <div
+                  class="w-full lg:w-1/2 p-16 lg:p-24 flex flex-col justify-center relative overflow-hidden"
+                >
+                  <!-- Background Pattern -->
+                  <div
+                    class="absolute inset-0 opacity-[0.05] pointer-events-none"
+                  >
+                    <div
+                      class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_30%,#ef4444_0%,transparent_50%)]"
+                    ></div>
+                  </div>
+
+                  <div
+                    v-if="currentSlide.subtitle"
+                    class="inline-block mb-6 px-8 py-3 bg-red-950/40 backdrop-blur-xl rounded-full border border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.1)] transition-all duration-700 relative z-10"
+                    :class="
+                      !currentSlide.layout.progressive || currentStep >= 0
+                        ? 'opacity-100 translate-y-0'
+                        : 'opacity-0 -translate-y-5'
+                    "
+                  >
+                    <span
+                      class="text-xl lg:text-2xl text-red-400 font-bold tracking-widest uppercase"
+                      v-html="currentSlide.subtitle"
+                    ></span>
+                  </div>
+                  <h2
+                    class="text-5xl lg:text-6xl font-black text-white mb-12 leading-tight pr-8 transition-all duration-700 flex items-center gap-6 relative z-10 drop-shadow-[0_0_15px_rgba(239,68,68,0.2)]"
+                    :class="
+                      !currentSlide.layout.progressive || currentStep >= 0
+                        ? 'opacity-100 translate-y-0'
+                        : 'opacity-0 translate-y-5'
+                    "
+                  >
+                    <component
+                      v-if="currentSlide.icon"
+                      :is="IconMap[currentSlide.icon]"
+                      class="w-16 h-16 text-red-500 flex-shrink-0"
+                    />
+                    <span v-html="currentSlide.title"></span>
+                  </h2>
+                  <div class="space-y-6 relative z-10">
+                    <div
+                      v-for="(item, idx) in currentSlide.content"
+                      :key="idx"
+                      class="p-8 bg-zinc-900/80 backdrop-blur-md rounded-[2rem] text-3xl lg:text-4xl text-zinc-300 font-bold border border-white/5 shadow-[0_10px_30px_rgba(0,0,0,0.3)] transition-all duration-500"
+                      :class="
+                        !currentSlide.layout.progressive || currentStep > idx
+                          ? 'opacity-100 translate-y-0 border-red-500/10'
+                          : 'opacity-0 translate-y-10'
+                      "
+                    >
+                      <div class="flex items-center gap-6">
+                        <div
+                          v-if="
+                            (currentSlide.itemIcons &&
+                              currentSlide.itemIcons[idx]) ||
+                            currentSlide.icon
+                          "
+                          class="w-16 h-16 bg-red-950/50 rounded-2xl flex items-center justify-center shrink-0 border border-red-500/20"
+                        >
+                          <component
+                            :is="
+                              IconMap[
+                                currentSlide.itemIcons &&
+                                currentSlide.itemIcons[idx]
+                                  ? currentSlide.itemIcons[idx]
+                                  : currentSlide.icon
+                              ]
+                            "
+                            class="w-10 h-10 text-red-500"
+                          />
+                        </div>
+                        <span v-html="item"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="w-full lg:w-1/2 flex-1 p-8 relative">
+                  <div
+                    class="absolute inset-0 bg-red-600/5 blur-[80px] z-0"
+                  ></div>
+                  <PremiumImage
+                    :src="getSlideImage(currentSlide.id)"
+                    alt="Consequence Visual"
+                    img-class-name="object-right"
+                    class-name="w-full h-full object-cover object-center rounded-[3rem] shadow-[0_20px_60px_rgba(0,0,0,0.6)] border border-white/10 brightness-90 contrast-110"
                   />
                 </div>
               </div>
@@ -1535,13 +1812,13 @@ const handleContentClick = (e: MouseEvent) => {
                   class="absolute inset-0 pointer-events-none overflow-hidden"
                 >
                   <!-- Background Image (Increased Opacity & Better Coverage) -->
-                    <img
-                      :src="
-                        IMAGE_BASE_URL +
-                        'assets/images/backgrounds/healthy_breakfast_bg.png'
-                      "
-                      class="absolute inset-0 w-full h-full object-none opacity-80 scale-100"
-                    />
+                  <img
+                    :src="
+                      IMAGE_BASE_URL +
+                      'assets/images/backgrounds/healthy_breakfast_bg.png'
+                    "
+                    class="absolute inset-0 w-full h-full object-none opacity-80 scale-100"
+                  />
 
                   <!-- Soft Spotlight & Gradient Overlays (Rebalanced for full-bleed feel) -->
                   <div
@@ -1663,7 +1940,9 @@ const handleContentClick = (e: MouseEvent) => {
                         >
                           <img
                             :src="
-                              IMAGE_BASE_URL + 'assets/images/avatars/' + member.avatar
+                              IMAGE_BASE_URL +
+                              'assets/images/avatars/' +
+                              member.avatar
                             "
                             :alt="member.name"
                             class="w-full h-full object-cover transition-all duration-700"
