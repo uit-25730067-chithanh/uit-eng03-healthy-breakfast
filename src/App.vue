@@ -1666,7 +1666,7 @@ const handleContentClick = (e: MouseEvent) => {
                               IMAGE_BASE_URL + 'assets/images/avatars/' + member.avatar
                             "
                             :alt="member.name"
-                            class="w-full h-full object-cover transition-all duration-700 grayscale-[0.8] group-[.is-active-step]:grayscale-0"
+                            class="w-full h-full object-cover transition-all duration-700"
                           />
                         </div>
 
