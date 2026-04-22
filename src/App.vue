@@ -79,6 +79,7 @@ watch(currentStep, (newStep) => {
 
 const isFullscreenMode = ref(false);
 const baseUrl = import.meta.env.BASE_URL;
+const IMAGE_BASE_URL = 'https://uit-25730067-chithanh.github.io/uit-eng03-healthy-breakfast/';
 
 // --- PRELOADING MECHANISM ---
 const preloadedImages = new Set<string>();
@@ -92,7 +93,7 @@ const preloadImage = (url: string) => {
 
 // --- IMAGE MAPPER ---
 const getSlideImage = (id: string, idx?: number) => {
-  const base = import.meta.env.BASE_URL;
+  const base = IMAGE_BASE_URL;
   if (id === "tips-4-grid") {
     return `${base}assets/images/slides/tips-4-${idx}.jpg`;
   }
@@ -888,7 +889,9 @@ const handleContentClick = (e: MouseEvent) => {
                       !currentSlide.layout.progressive || currentStep > idx
                         ? 'opacity-100 translate-y-0'
                         : 'opacity-0 translate-y-10',
-                      (currentSlide.layout.progressive && currentStep === idx + 1) ? 'is-active-step' : ''
+                      currentSlide.layout.progressive && currentStep === idx + 1
+                        ? 'is-active-step'
+                        : '',
                     ]"
                   >
                     <div
@@ -1280,7 +1283,10 @@ const handleContentClick = (e: MouseEvent) => {
                     </svg>
 
                     <!-- Central Core -->
-                    <div class="relative z-20 group" :class="currentStep === 0 ? 'is-active-step' : ''">
+                    <div
+                      class="relative z-20 group"
+                      :class="currentStep === 0 ? 'is-active-step' : ''"
+                    >
                       <div
                         class="absolute inset-0 bg-emerald-500 rounded-full blur-[100px] opacity-30 group-[.is-active-step]:opacity-50 transition-opacity"
                       ></div>
@@ -1347,7 +1353,11 @@ const handleContentClick = (e: MouseEvent) => {
                       <!-- Node Card -->
                       <div
                         class="relative w-[340px] bg-white/90 backdrop-blur-3xl p-8 rounded-[2.5rem] border border-white shadow-xl group transition-all duration-500 z-10 animate-float"
-                        :class="currentStep === idx + 1 ? 'is-active-step -translate-y-2' : ''"
+                        :class="
+                          currentStep === idx + 1
+                            ? 'is-active-step -translate-y-2'
+                            : ''
+                        "
                         :style="{ animationDelay: `${idx * 0.5}s` }"
                       >
                         <div
@@ -1453,7 +1463,7 @@ const handleContentClick = (e: MouseEvent) => {
                         currentStep > idx
                           ? 'opacity-100 translate-y-0'
                           : 'opacity-0 translate-y-10',
-                        currentStep === idx + 1 ? 'is-active-step' : ''
+                        currentStep === idx + 1 ? 'is-active-step' : '',
                       ]"
                     >
                       <div
@@ -1525,13 +1535,13 @@ const handleContentClick = (e: MouseEvent) => {
                   class="absolute inset-0 pointer-events-none overflow-hidden"
                 >
                   <!-- Background Image (Increased Opacity & Better Coverage) -->
-                  <img
-                    :src="
-                      baseUrl +
-                      'assets/images/backgrounds/healthy_breakfast_bg.png'
-                    "
-                    class="absolute inset-0 w-full h-full object-none opacity-80 scale-100"
-                  />
+                    <img
+                      :src="
+                        IMAGE_BASE_URL +
+                        'assets/images/backgrounds/healthy_breakfast_bg.png'
+                      "
+                      class="absolute inset-0 w-full h-full object-none opacity-80 scale-100"
+                    />
 
                   <!-- Soft Spotlight & Gradient Overlays (Rebalanced for full-bleed feel) -->
                   <div
@@ -1637,7 +1647,7 @@ const handleContentClick = (e: MouseEvent) => {
                         currentStep > idx
                           ? 'opacity-100 translate-y-0'
                           : 'opacity-0 translate-y-20',
-                        currentStep === idx + 1 ? 'is-active-step' : ''
+                        currentStep === idx + 1 ? 'is-active-step' : '',
                       ]"
                     >
                       <!-- Avatar Section -->
@@ -1653,7 +1663,7 @@ const handleContentClick = (e: MouseEvent) => {
                         >
                           <img
                             :src="
-                              baseUrl + 'assets/images/avatars/' + member.avatar
+                              IMAGE_BASE_URL + 'assets/images/avatars/' + member.avatar
                             "
                             :alt="member.name"
                             class="w-full h-full object-cover transition-all duration-700 grayscale-[0.8] group-[.is-active-step]:grayscale-0"
