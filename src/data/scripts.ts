@@ -56,7 +56,7 @@ export const slideScripts: Record<string, string> = {
   "tips-5":
     "That summarizes my three tips: [CLICK] add more greens, [CLICK] cut down on sugar, [CLICK] and stick to fresh produce. [CLICK]",
   "outro-1":
-    "To wrap up our presentation, let’s look back at the big picture. [CLICK] We've seen health benefits, [CLICK] mental performance, [CLICK] long-term risks, [CLICK] and practical tips. [CLICK]",
+    "Thank you, Đức Ý, for those very practical and useful tips! I will definitely try your quick breakfast ideas starting from tomorrow. To wrap up our presentation, let’s look back at the big picture. [CLICK] We've seen health benefits, [CLICK] mental performance, [CLICK] long-term risks, [CLICK] and practical tips. [CLICK]",
   "q-and-a":
     "Now, we would like to open the floor for any questions. [CLICK] Does anyone have any questions [CLICK] or want to share their breakfast routine? (Pause 5s - look at camera). [CLICK]",
   "outro-2":

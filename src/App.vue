@@ -707,12 +707,15 @@ const handleContentClick = (e: MouseEvent) => {
                     class="w-20 h-20 text-orange-400 mx-auto mb-8 opacity-60"
                   />
                   <h2
-                    class="text-5xl md:text-6xl font-bold italic leading-snug text-emerald-900 drop-shadow-sm transition-all duration-700"
-                    :class="
+                    class="text-5xl md:text-6xl font-bold italic leading-snug drop-shadow-sm transition-all duration-700"
+                    :class="[
+                      currentSlide.id === 'intro-4'
+                        ? 'text-white'
+                        : 'text-emerald-900',
                       !currentSlide.layout.progressive || currentStep >= 0
                         ? 'opacity-100 translate-y-0'
-                        : 'opacity-0 translate-y-5'
-                    "
+                        : 'opacity-0 translate-y-5',
+                    ]"
                   >
                     &ldquo;<span v-html="currentSlide.title"></span>&rdquo;
                   </h2>
@@ -723,12 +726,16 @@ const handleContentClick = (e: MouseEvent) => {
                     <div
                       v-for="(item, idx) in currentSlide.content"
                       :key="idx"
-                      class="text-2xl md:text-3xl font-medium text-emerald-800/80 transition-all duration-700"
-                      :class="
+
+                      class="text-2xl md:text-3xl font-medium transition-all duration-700"
+                      :class="[
+                        currentSlide.id === 'intro-4'
+                          ? 'text-white'
+                          : 'text-emerald-800/80',
                         !currentSlide.layout.progressive || currentStep > idx
                           ? 'opacity-100 translate-y-0'
-                          : 'opacity-0 translate-y-5'
-                      "
+                          : 'opacity-0 translate-y-5',
+                      ]"
                       v-html="item"
                     ></div>
                   </div>
@@ -1280,7 +1287,7 @@ const handleContentClick = (e: MouseEvent) => {
                       class="absolute transition-all duration-1000"
                       :style="{
                         transform: `translate(${pos.x}, ${pos.y})`,
-                        opacity: currentStep >= idx ? 1 : 0,
+                        opacity: currentStep > idx ? 1 : 0,
                         transitionDelay: `${idx * 150}ms`,
                       }"
                     >
