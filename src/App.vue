@@ -72,6 +72,7 @@ import Confetti from "./components/effects/Confetti.vue";
 const currentSlideIdx = ref(0);
 const currentStep = ref(0);
 const isFullscreenMode = ref(false);
+const baseUrl = import.meta.env.BASE_URL;
 
 // --- PRELOADING MECHANISM ---
 const preloadedImages = new Set<string>();
@@ -446,8 +447,34 @@ const handleContentClick = (e: MouseEvent) => {
                     class-name="w-full h-full object-cover"
                   />
                   <div
-                    class="absolute inset-0 bg-gradient-to-t from-emerald-900/90 via-emerald-800/40 to-black/20"
+                    class="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(16,185,129,0.2)_0%,transparent_70%)]"
                   ></div>
+
+                  <!-- Grainy Overlay -->
+                  <div
+                    class="absolute inset-0 opacity-[0.25] mix-blend-overlay pointer-events-none"
+                    style="
+                      background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E&quot;);
+                    "
+                  ></div>
+
+                  <!-- Floating Icons for Title -->
+                  <div
+                    class="absolute top-[10%] right-[10%] opacity-[0.1] rotate-12 scale-150 animate-bounce duration-[30s]"
+                  >
+                    <component
+                      :is="IconMap['Leaf']"
+                      class="w-32 h-32 text-white"
+                    />
+                  </div>
+                  <div
+                    class="absolute bottom-[20%] left-[5%] opacity-[0.1] -rotate-12 scale-125 animate-pulse duration-[25s]"
+                  >
+                    <component
+                      :is="IconMap['Coffee']"
+                      class="w-40 h-40 text-white"
+                    />
+                  </div>
                 </div>
                 <div class="z-10 w-full max-w-6xl">
                   <div
@@ -531,13 +558,48 @@ const handleContentClick = (e: MouseEvent) => {
               <!-- BULLETS LAYOUT -->
               <div
                 v-else-if="currentSlide.layout.type === 'bullets'"
-                class="flex flex-col lg:flex-row h-full w-full transition-colors duration-1000"
-                :class="
-                  currentSlide.id === 'consequences-4'
-                    ? 'bg-red-50'
-                    : 'bg-slate-50'
-                "
+                class="flex flex-col lg:flex-row h-full w-full transition-colors duration-1000 relative overflow-hidden"
               >
+                <!-- Premium Background Decoration -->
+                <div
+                  class="absolute inset-0 pointer-events-none overflow-hidden bg-[#fafaf9] z-0"
+                >
+                  <div
+                    class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,#ecfdf5_0%,transparent_50%)]"
+                  ></div>
+                  <div
+                    class="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-emerald-100/30 rounded-full blur-[100px] animate-pulse duration-[10s]"
+                  ></div>
+                  <div
+                    class="absolute bottom-[-10%] right-[10%] w-[50%] h-[50%] bg-orange-50/40 rounded-full blur-[120px] animate-pulse duration-[12s] [animation-delay:2s]"
+                  ></div>
+
+                  <!-- Floating Icons (Subtle) -->
+                  <div
+                    class="absolute top-[15%] right-[15%] opacity-[0.02] rotate-12 animate-bounce duration-[25s]"
+                  >
+                    <component
+                      :is="IconMap['Leaf']"
+                      class="w-32 h-32 text-emerald-900"
+                    />
+                  </div>
+                  <div
+                    class="absolute bottom-[20%] left-[5%] opacity-[0.02] -rotate-12 animate-pulse duration-[18s]"
+                  >
+                    <component
+                      :is="IconMap['Heart']"
+                      class="w-24 h-24 text-emerald-900"
+                    />
+                  </div>
+
+                  <!-- Grainy Overlay -->
+                  <div
+                    class="absolute inset-0 opacity-[0.3] mix-blend-overlay"
+                    style="
+                      background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E&quot;);
+                    "
+                  ></div>
+                </div>
                 <div
                   class="w-full lg:w-[55%] p-12 lg:p-20 flex flex-col justify-center relative z-10"
                 >
@@ -624,15 +686,11 @@ const handleContentClick = (e: MouseEvent) => {
                     class-name="w-full h-full object-cover rounded-[4rem] shadow-2xl"
                   />
                 </div>
-                <div
-                  class="absolute inset-0 bg-emerald-900/30 backdrop-blur-md z-0 rounded-[4rem] m-8"
-                ></div>
-                <div
-                  class="relative z-10 bg-white/90 backdrop-blur-xl p-16 rounded-[3rem] max-w-5xl shadow-2xl border border-white/50 animate-in zoom-in-95 duration-1000"
-                >
+
+                <div class="relative z-10 w-full max-w-5xl">
                   <div
                     v-if="currentSlide.subtitle"
-                    class="inline-block mb-6 px-8 py-3 bg-emerald-600/10 backdrop-blur-xl rounded-full border border-emerald-200/50 shadow-sm transition-all duration-700 mx-auto"
+                    class="inline-block mb-6 px-8 py-3 bg-emerald-600/10 backdrop-blur-xl rounded-full border border-emerald-200/50 shadow-sm transition-all duration-700"
                     :class="
                       !currentSlide.layout.progressive || currentStep >= 0
                         ? 'opacity-100 translate-y-0'
@@ -1402,6 +1460,176 @@ const handleContentClick = (e: MouseEvent) => {
                     <span>MEM_STATE: OVERFLOW</span>
                     <span>//</span>
                     <span>REF: CHITHANH_ENG03</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Slide Layout: Team (Our Group) -->
+              <div
+                v-else-if="currentSlide.layout.type === 'team'"
+                class="flex flex-col h-full w-full p-12 md:p-20 relative overflow-hidden bg-slate-50 items-center justify-center"
+              >
+                <!-- Premium Background Decoration -->
+                <div
+                  class="absolute inset-0 pointer-events-none overflow-hidden"
+                >
+                  <!-- Background Image (Increased Opacity & Better Coverage) -->
+                  <img
+                    :src="
+                      baseUrl +
+                      'assets/images/backgrounds/healthy_breakfast_bg.png'
+                    "
+                    class="absolute inset-0 w-full h-full object-cover opacity-80 scale-100"
+                  />
+
+                  <!-- Soft Spotlight & Gradient Overlays (Rebalanced for full-bleed feel) -->
+                  <div
+                    class="absolute inset-0 bg-gradient-to-b from-white/60 via-white/40 to-white/70"
+                  ></div>
+                  <div
+                    class="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,transparent_20%,rgba(250,250,249,0.4)_100%)]"
+                  ></div>
+
+                  <!-- Advanced Mesh Gradients (Softened) -->
+                  <div
+                    class="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-emerald-200/15 rounded-full blur-[120px] animate-pulse duration-[12s]"
+                  ></div>
+                  <div
+                    class="absolute bottom-[-20%] right-[-10%] w-[80%] h-[80%] bg-orange-100/20 rounded-full blur-[150px] animate-pulse duration-[15s] [animation-delay:3s]"
+                  ></div>
+                  <div
+                    class="absolute top-[30%] right-[-15%] w-[40%] h-[40%] bg-yellow-50/25 rounded-full blur-[100px] animate-pulse duration-[10s] [animation-delay:5s]"
+                  ></div>
+
+                  <!-- Floating Thematic Elements (Subtle decorations) -->
+                  <div
+                    class="absolute top-[10%] left-[5%] opacity-[0.02] rotate-12 scale-150 animate-bounce duration-[20s]"
+                  >
+                    <component
+                      :is="IconMap['Coffee']"
+                      class="w-32 h-32 text-emerald-900"
+                    />
+                  </div>
+                  <div
+                    class="absolute bottom-[15%] right-[5%] opacity-[0.02] -rotate-12 scale-125 animate-bounce duration-[25s] [animation-delay:2s]"
+                  >
+                    <component
+                      :is="IconMap['Leaf']"
+                      class="w-40 h-40 text-emerald-900"
+                    />
+                  </div>
+                  <div
+                    class="absolute top-[40%] right-[10%] opacity-[0.01] rotate-45 scale-110 animate-pulse duration-[15s]"
+                  >
+                    <component
+                      :is="IconMap['Apple']"
+                      class="w-24 h-24 text-orange-900"
+                    />
+                  </div>
+                  <div
+                    class="absolute bottom-[20%] left-[10%] opacity-[0.01] -rotate-12 scale-150 animate-pulse duration-[18s] [animation-delay:4s]"
+                  >
+                    <component
+                      :is="IconMap['Heart']"
+                      class="w-28 h-28 text-orange-900"
+                    />
+                  </div>
+
+                  <!-- Grainy Overlay for Premium Texture (Reduced) -->
+                  <div
+                    class="absolute inset-0 opacity-[0.15] mix-blend-overlay pointer-events-none"
+                    style="
+                      background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E&quot;);
+                    "
+                  ></div>
+
+                  <!-- Subtle Geometric Grid -->
+                  <div
+                    class="absolute inset-0 opacity-[0.02]"
+                    style="
+                      background-image:
+                        linear-gradient(#10b981 1px, transparent 1px),
+                        linear-gradient(90deg, #10b981 1px, transparent 1px);
+                      background-size: 80px 80px;
+                    "
+                  ></div>
+                </div>
+
+                <div
+                  class="relative z-10 w-full max-w-7xl flex flex-col items-center"
+                >
+                  <!-- Section Title -->
+                  <div class="mb-16 text-center">
+                    <h2
+                      class="text-4xl md:text-6xl font-black text-emerald-950 mb-4 tracking-tight flex items-center justify-center gap-4"
+                    >
+                      <component
+                        v-if="currentSlide.icon"
+                        :is="IconMap[currentSlide.icon]"
+                        class="w-10 h-10 text-emerald-600"
+                      />
+                      {{ currentSlide.title }}
+                    </h2>
+                    <div
+                      class="h-1.5 w-32 bg-gradient-to-r from-emerald-500 to-orange-500 mx-auto rounded-full shadow-[0_4px_10px_rgba(16,185,129,0.2)]"
+                    ></div>
+                  </div>
+
+                  <!-- Team Grid -->
+                  <div class="grid grid-cols-1 md:grid-cols-5 gap-8 w-full">
+                    <div
+                      v-for="(member, idx) in currentSlide.meta.members"
+                      :key="idx"
+                      class="group flex flex-col items-center transition-all duration-1000 transform"
+                      :class="
+                        currentStep > idx
+                          ? 'opacity-100 translate-y-0'
+                          : 'opacity-0 translate-y-20'
+                      "
+                    >
+                      <!-- Avatar Section -->
+                      <div class="relative mb-8">
+                        <!-- Outer Shadow/Glow -->
+                        <div
+                          class="absolute -inset-2 bg-gradient-to-tr from-emerald-100 to-orange-100 rounded-full opacity-0 group-hover:opacity-100 transition duration-700 blur-lg"
+                        ></div>
+
+                        <!-- Image Container -->
+                        <div
+                          class="relative w-32 h-32 md:w-48 md:h-48 rounded-full border-4 border-white/80 overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.1)] bg-white/40 backdrop-blur-md group-hover:border-emerald-500 group-hover:scale-105 transition-all duration-500"
+                        >
+                          <img
+                            :src="
+                              baseUrl + 'assets/images/avatars/' + member.avatar
+                            "
+                            :alt="member.name"
+                            class="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700"
+                          />
+                        </div>
+
+                        <!-- Leader Badge -->
+                        <div
+                          v-if="member.role === 'Leader'"
+                          class="absolute -top-1 -right-1 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-[10px] font-black px-3 py-1.5 rounded-full shadow-lg border border-white/40 uppercase tracking-widest z-20"
+                        >
+                          Leader
+                        </div>
+                      </div>
+
+                      <!-- Text Info -->
+                      <div class="text-center">
+                        <h3
+                          class="text-xl md:text-2xl font-bold text-emerald-950 mb-1 group-hover:text-emerald-600 transition-colors duration-300"
+                        >
+                          {{ member.name }}
+                        </h3>
+                        <p
+                          class="font-mono text-xs md:text-sm text-emerald-800/50 font-bold tracking-widest"
+                        >
+                          MSSV: {{ member.id }}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
