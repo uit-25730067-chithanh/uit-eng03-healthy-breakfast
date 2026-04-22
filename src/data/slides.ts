@@ -2,7 +2,16 @@ import membersData from "./members.json";
 import { slideScripts } from "./scripts";
 
 export interface SlideLayout {
-  type: "title" | "bullets" | "quote" | "split" | "image-grid" | "component" | "InsightCanvas" | "GlitchEffect" | "team";
+  type:
+    | "title"
+    | "bullets"
+    | "quote"
+    | "split"
+    | "image-grid"
+    | "component"
+    | "InsightCanvas"
+    | "GlitchEffect"
+    | "team";
   component?: string;
   progressive?: boolean;
 }
@@ -40,8 +49,8 @@ export const rawSlides: SlideData[] = [
     script: slideScripts["intro-2"],
     layout: { type: "team", progressive: true },
     meta: {
-      members: membersData
-    }
+      members: membersData,
+    },
   },
   {
     id: "intro-3",
@@ -364,7 +373,10 @@ export const rawSlides: SlideData[] = [
     title: "QUESTIONS & ANSWERS",
     subtitle: "We'd love to hear your thoughts!",
     speaker: "Thanh Hải",
-    content: ["Feel free to ask any questions or share your morning routine."],
+    content: [
+      "Feel free to ask any questions or share your morning routine.",
+      "We're all here to learn together!",
+    ],
     script: slideScripts["q-and-a"],
     layout: { type: "title", progressive: true },
   },
@@ -388,6 +400,7 @@ export const rawSlides: SlideData[] = [
     content: [
       "Special thanks to Mrs. Tien.",
       "And all classmates for your time and energy!",
+      "And last but not least, thanks to ourselves for waking up early to be here today!",
     ],
     script: slideScripts["closing"],
     layout: { type: "title", progressive: true },

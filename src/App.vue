@@ -71,6 +71,12 @@ import Confetti from "./components/effects/Confetti.vue";
 // --- IMAGE MAPPER ---
 const currentSlideIdx = ref(0);
 const currentStep = ref(0);
+const activeMemberIdx = ref<number | null>(null);
+
+watch(currentStep, (newStep) => {
+  activeMemberIdx.value = newStep - 1;
+});
+
 const isFullscreenMode = ref(false);
 const baseUrl = import.meta.env.BASE_URL;
 
@@ -543,7 +549,7 @@ const handleContentClick = (e: MouseEvent) => {
                     <div
                       v-for="(item, idx) in currentSlide.content"
                       :key="idx"
-                      class="text-2xl lg:text-4xl text-emerald-100/90 font-medium transition-all duration-700"
+                      class="text-3xl lg:text-4xl text-white font-semibold drop-shadow-[0_4px_4px_rgba(0,0,0,0.6)] transition-all duration-700"
                       :class="
                         !currentSlide.layout.progressive || currentStep > idx
                           ? 'opacity-100 translate-y-0'
@@ -685,6 +691,15 @@ const handleContentClick = (e: MouseEvent) => {
                     alt="Background"
                     class-name="w-full h-full object-cover rounded-[4rem] shadow-2xl"
                   />
+                  <!-- Overlay to improve text readability on bright images -->
+                  <div
+                    v-if="
+                      ['intro-4', 'performance-6', 'consequences-5'].includes(
+                        currentSlide.id,
+                      )
+                    "
+                    class="absolute inset-8 rounded-[4rem] bg-black/40 backdrop-blur-[2px]"
+                  ></div>
                 </div>
 
                 <div class="relative z-10 w-full max-w-5xl">
@@ -707,11 +722,13 @@ const handleContentClick = (e: MouseEvent) => {
                     class="w-20 h-20 text-orange-400 mx-auto mb-8 opacity-60"
                   />
                   <h2
-                    class="text-5xl md:text-6xl font-bold italic leading-snug drop-shadow-sm transition-all duration-700"
+                    class="font-bold italic transition-all duration-700"
                     :class="[
-                      currentSlide.id === 'intro-4'
-                        ? 'text-white'
-                        : 'text-emerald-900',
+                      ['intro-4', 'performance-6', 'consequences-5'].includes(
+                        currentSlide.id,
+                      )
+                        ? 'text-white text-6xl md:text-7xl lg:text-8xl leading-tight drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]'
+                        : 'text-emerald-900 text-5xl md:text-6xl leading-snug drop-shadow-sm',
                       !currentSlide.layout.progressive || currentStep >= 0
                         ? 'opacity-100 translate-y-0'
                         : 'opacity-0 translate-y-5',
@@ -726,10 +743,11 @@ const handleContentClick = (e: MouseEvent) => {
                     <div
                       v-for="(item, idx) in currentSlide.content"
                       :key="idx"
-
                       class="text-2xl md:text-3xl font-medium transition-all duration-700"
                       :class="[
-                        currentSlide.id === 'intro-4'
+                        ['intro-4', 'performance-6', 'consequences-5'].includes(
+                          currentSlide.id,
+                        )
                           ? 'text-white'
                           : 'text-emerald-800/80',
                         !currentSlide.layout.progressive || currentStep > idx
@@ -866,18 +884,19 @@ const handleContentClick = (e: MouseEvent) => {
                     v-for="(item, idx) in currentSlide.content"
                     :key="idx"
                     class="relative bg-white rounded-[2.5rem] flex flex-col items-center justify-center p-4 shadow-[0_10px_30px_rgba(0,0,0,0.06)] border border-slate-100 group overflow-hidden transition-all duration-500"
-                    :class="
+                    :class="[
                       !currentSlide.layout.progressive || currentStep > idx
                         ? 'opacity-100 translate-y-0'
-                        : 'opacity-0 translate-y-10'
-                    "
+                        : 'opacity-0 translate-y-10',
+                      (currentSlide.layout.progressive && currentStep === idx + 1) ? 'is-active-step' : ''
+                    ]"
                   >
                     <div
                       class="w-full aspect-square rounded-[2rem] overflow-hidden mb-6 relative"
                     >
                       <PremiumImage
                         :src="getSlideImage('tips-4-grid', idx)"
-                        class-name="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                        class-name="absolute inset-0 w-full h-full object-cover group-[.is-active-step]:scale-110 transition-transform duration-700"
                         :lazy="true"
                       />
                       <div
@@ -911,7 +930,7 @@ const handleContentClick = (e: MouseEvent) => {
                   v-if="currentSlide.layout.component === 'SimpleCharts'"
                   class="flex flex-col lg:flex-row items-center justify-center h-full bg-slate-50 w-full p-16 relative"
                 >
-                  <div class="absolute inset-0 opacity-10 pointer-events-none">
+                  <div class="absolute inset-0 opacity-30 pointer-events-none">
                     <PremiumImage
                       :src="getSlideImage(currentSlide.id)"
                       alt=""
@@ -1185,15 +1204,25 @@ const handleContentClick = (e: MouseEvent) => {
               <!-- InsightCanvas (Big Picture Mind Map) -->
               <div
                 v-else-if="currentSlide.layout.type === 'InsightCanvas'"
-                class="relative h-full w-full bg-slate-900 overflow-hidden flex flex-col items-center justify-center p-12"
+                class="relative h-full w-full bg-slate-50 overflow-hidden flex flex-col items-center justify-center p-12"
               >
-                <!-- Neural Network Background -->
+                <!-- Background Image generated for Recap -->
+                <div
+                  class="absolute inset-0 z-0 opacity-80 pointer-events-none"
+                >
+                  <PremiumImage
+                    :src="getSlideImage('recap')"
+                    class-name="w-full h-full object-cover"
+                  />
+                </div>
+
+                <!-- Neural Network Background Elements -->
                 <div class="absolute inset-0 z-0">
                   <div
-                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border border-emerald-500/10 rounded-full animate-[ping_10s_linear_infinite]"
+                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border border-emerald-500/20 rounded-full animate-[ping_10s_linear_infinite]"
                   ></div>
                   <div
-                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-blue-500/10 rounded-full animate-[ping_7s_linear_infinite]"
+                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-blue-500/20 rounded-full animate-[ping_7s_linear_infinite]"
                   ></div>
                 </div>
 
@@ -1201,17 +1230,17 @@ const handleContentClick = (e: MouseEvent) => {
                   class="relative z-10 w-full max-w-7xl flex flex-col items-center"
                 >
                   <!-- Header Area -->
-                  <div class="text-center mb-16 space-y-4">
+                  <div class="text-center mb-16 space-y-4 relative z-20">
                     <div
-                      class="inline-block px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-mono tracking-[0.3em] uppercase animate-pulse"
+                      class="inline-block px-4 py-1.5 rounded-full bg-emerald-100 border border-emerald-200 text-emerald-700 text-[10px] font-mono tracking-[0.3em] uppercase animate-pulse"
                     >
                       [ Brain State Awareness ]
                     </div>
                     <h2
-                      class="text-6xl lg:text-7xl font-black text-white tracking-tighter flex items-center justify-center gap-6"
+                      class="text-6xl lg:text-7xl font-black text-emerald-950 tracking-tighter flex items-center justify-center gap-6"
                     >
                       <div
-                        class="p-4 bg-emerald-500 rounded-3xl shadow-[0_0_50px_rgba(16,185,129,0.3)]"
+                        class="p-4 bg-emerald-500 rounded-3xl shadow-[0_0_50px_rgba(16,185,129,0.3)] animate-float"
                       >
                         <component
                           :is="IconMap[currentSlide.icon] || BrainCircuit"
@@ -1226,29 +1255,53 @@ const handleContentClick = (e: MouseEvent) => {
                   <div
                     class="relative w-full h-[600px] flex items-center justify-center"
                   >
+                    <!-- Global Visual Connections -->
+                    <svg
+                      class="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-visible"
+                    >
+                      <line
+                        v-for="(pos, idx) in [
+                          { x: '-380px', y: '-180px', hex: '#10b981' },
+                          { x: '380px', y: '-180px', hex: '#3b82f6' },
+                          { x: '-380px', y: '180px', hex: '#f59e0b' },
+                          { x: '380px', y: '180px', hex: '#ef4444' },
+                        ]"
+                        :key="`line-${idx}`"
+                        x1="50%"
+                        y1="50%"
+                        :x2="`calc(50% + ${pos.x})`"
+                        :y2="`calc(50% + ${pos.y})`"
+                        :stroke="pos.hex"
+                        stroke-width="2"
+                        stroke-dasharray="8 8"
+                        class="transition-opacity duration-1000 animate-dash"
+                        :class="currentStep > idx ? 'opacity-40' : 'opacity-0'"
+                      />
+                    </svg>
+
                     <!-- Central Core -->
-                    <div class="relative z-20 group">
+                    <div class="relative z-20 group" :class="currentStep === 0 ? 'is-active-step' : ''">
                       <div
-                        class="absolute inset-0 bg-emerald-500 rounded-full blur-[100px] opacity-20 group-hover:opacity-40 transition-opacity"
+                        class="absolute inset-0 bg-emerald-500 rounded-full blur-[100px] opacity-30 group-[.is-active-step]:opacity-50 transition-opacity"
                       ></div>
                       <div
-                        class="relative w-56 h-56 bg-slate-800 rounded-[3rem] border-2 border-emerald-500/50 shadow-2xl flex flex-col items-center justify-center overflow-hidden"
+                        class="relative w-56 h-56 bg-white rounded-[3rem] border-2 border-emerald-200 shadow-2xl flex flex-col items-center justify-center overflow-hidden animate-float"
                       >
                         <div class="absolute inset-0 opacity-40">
                           <PremiumImage
                             :src="getSlideImage(currentSlide.id)"
-                            class-name="w-full h-full object-cover grayscale scale-110 group-hover:scale-125 transition-transform duration-[10s]"
+                            class-name="w-full h-full object-cover grayscale scale-110 group-[.is-active-step]:scale-125 transition-transform duration-[10s]"
                           />
                         </div>
                         <div
-                          class="relative z-10 text-center p-4 bg-slate-900/60 backdrop-blur-md rounded-2xl border border-white/10 mx-4"
+                          class="relative z-10 text-center p-4 bg-white/90 backdrop-blur-md rounded-2xl border border-white mx-4 shadow-sm"
                         >
                           <span
-                            class="text-emerald-400 font-mono text-[9px] block mb-1 uppercase tracking-widest"
+                            class="text-emerald-700 font-mono text-[9px] block mb-1 uppercase tracking-widest"
                             >Core Insight</span
                           >
                           <span
-                            class="text-white font-black text-xl tracking-tight leading-none uppercase"
+                            class="text-slate-900 font-black text-xl tracking-tight leading-none uppercase"
                             >Full Recap</span
                           >
                         </div>
@@ -1291,30 +1344,18 @@ const handleContentClick = (e: MouseEvent) => {
                         transitionDelay: `${idx * 150}ms`,
                       }"
                     >
-                      <!-- Visual Connection -->
-                      <svg
-                        class="absolute top-1/2 left-1/2 w-[400px] h-[400px] pointer-events-none overflow-visible z-0"
-                        style="transform: translate(-50%, -50%)"
-                      >
-                        <line
-                          x1="0"
-                          y1="0"
-                          :x2="-parseInt(pos.x)"
-                          :y2="-parseInt(pos.y)"
-                          :stroke="pos.hex"
-                          stroke-width="1"
-                          stroke-dasharray="6 6"
-                          class="opacity-30 animate-dash"
-                        />
-                      </svg>
-
                       <!-- Node Card -->
                       <div
-                        class="relative w-[340px] bg-slate-800/80 backdrop-blur-3xl p-8 rounded-[2.5rem] border border-white/10 shadow-2xl group hover:-translate-y-2 transition-all duration-500 z-10"
+                        class="relative w-[340px] bg-white/90 backdrop-blur-3xl p-8 rounded-[2.5rem] border border-white shadow-xl group transition-all duration-500 z-10 animate-float"
+                        :class="currentStep === idx + 1 ? 'is-active-step -translate-y-2' : ''"
+                        :style="{ animationDelay: `${idx * 0.5}s` }"
                       >
                         <div
-                          class="absolute top-6 right-8 w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner border border-white/10 shadow-inner"
-                          :class="`bg-${pos.color}-500/10 text-${pos.color}-400`"
+                          class="absolute top-6 right-8 w-14 h-14 rounded-2xl flex items-center justify-center border border-slate-100 shadow-sm"
+                          :style="{
+                            backgroundColor: pos.hex + '1a',
+                            color: pos.hex,
+                          }"
                         >
                           <component
                             :is="
@@ -1324,23 +1365,25 @@ const handleContentClick = (e: MouseEvent) => {
                             class="w-8 h-8"
                           />
                         </div>
-                        <div class="space-y-4">
+                        <div class="space-y-4 pr-16">
                           <div class="flex items-center gap-3">
                             <div
                               class="w-2.5 h-2.5 rounded-full"
-                              :class="`bg-${pos.color}-500`"
-                              :style="{ boxShadow: `0 0 15px ${pos.hex}` }"
+                              :style="{
+                                backgroundColor: pos.hex,
+                                boxShadow: `0 0 10px ${pos.hex}`,
+                              }"
                             ></div>
                             <span
                               class="font-mono text-[10px] uppercase tracking-[0.3em] font-bold"
-                              :class="`text-${pos.color}-400`"
+                              :style="{ color: pos.hex }"
                               >{{
                                 idx < 2 ? "Logic Node" : "Physical Node"
                               }}</span
                             >
                           </div>
                           <p
-                            class="text-2xl font-bold text-white leading-tight"
+                            class="text-2xl font-bold text-slate-800 leading-tight"
                             v-html="currentSlide.content[idx]"
                           ></p>
                         </div>
@@ -1406,14 +1449,15 @@ const handleContentClick = (e: MouseEvent) => {
                       v-for="(item, idx) in currentSlide.content"
                       :key="idx"
                       class="group relative overflow-hidden transition-all duration-300"
-                      :class="
+                      :class="[
                         currentStep > idx
                           ? 'opacity-100 translate-y-0'
-                          : 'opacity-0 translate-y-10'
-                      "
+                          : 'opacity-0 translate-y-10',
+                        currentStep === idx + 1 ? 'is-active-step' : ''
+                      ]"
                     >
                       <div
-                        class="absolute inset-0 bg-red-600/5 group-hover:bg-red-600/10 transition-colors"
+                        class="absolute inset-0 bg-red-600/5 group-[.is-active-step]:bg-red-600/10 transition-colors"
                       ></div>
                       <div
                         class="absolute left-0 top-0 bottom-0 w-1 bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.5)]"
@@ -1449,7 +1493,7 @@ const handleContentClick = (e: MouseEvent) => {
                       <!-- Glitch line decoration -->
                       <div
                         v-if="currentStep > idx"
-                        class="absolute right-4 top-1/2 -translate-y-1/2 opacity-20 group-hover:opacity-100 transition-opacity"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 opacity-20 group-[.is-active-step]:opacity-100 transition-opacity"
                       >
                         <div
                           class="h-[1px] w-12 bg-red-500 animate-pulse"
@@ -1486,7 +1530,7 @@ const handleContentClick = (e: MouseEvent) => {
                       baseUrl +
                       'assets/images/backgrounds/healthy_breakfast_bg.png'
                     "
-                    class="absolute inset-0 w-full h-full object-cover opacity-80 scale-100"
+                    class="absolute inset-0 w-full h-full object-none opacity-80 scale-100"
                   />
 
                   <!-- Soft Spotlight & Gradient Overlays (Rebalanced for full-bleed feel) -->
@@ -1587,30 +1631,32 @@ const handleContentClick = (e: MouseEvent) => {
                     <div
                       v-for="(member, idx) in currentSlide.meta.members"
                       :key="idx"
-                      class="group flex flex-col items-center transition-all duration-1000 transform"
-                      :class="
+                      class="group flex flex-col items-center transition-all duration-1000 transform cursor-pointer"
+                      @click="activeMemberIdx = idx"
+                      :class="[
                         currentStep > idx
                           ? 'opacity-100 translate-y-0'
-                          : 'opacity-0 translate-y-20'
-                      "
+                          : 'opacity-0 translate-y-20',
+                        currentStep === idx + 1 ? 'is-active-step' : ''
+                      ]"
                     >
                       <!-- Avatar Section -->
                       <div class="relative mb-8">
                         <!-- Outer Shadow/Glow -->
                         <div
-                          class="absolute -inset-2 bg-gradient-to-tr from-emerald-100 to-orange-100 rounded-full opacity-0 group-hover:opacity-100 transition duration-700 blur-lg"
+                          class="absolute -inset-2 bg-gradient-to-tr from-emerald-100 to-orange-100 rounded-full transition duration-700 blur-lg opacity-0 group-[.is-active-step]:opacity-100"
                         ></div>
 
                         <!-- Image Container -->
                         <div
-                          class="relative w-32 h-32 md:w-48 md:h-48 rounded-full border-4 border-white/80 overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.1)] bg-white/40 backdrop-blur-md group-hover:border-emerald-500 group-hover:scale-105 transition-all duration-500"
+                          class="relative w-32 h-32 md:w-48 md:h-48 rounded-full border-4 overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.1)] bg-white/40 backdrop-blur-md transition-all duration-500 border-white/80 group-[.is-active-step]:border-emerald-500 group-[.is-active-step]:scale-105"
                         >
                           <img
                             :src="
                               baseUrl + 'assets/images/avatars/' + member.avatar
                             "
                             :alt="member.name"
-                            class="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700"
+                            class="w-full h-full object-cover transition-all duration-700 grayscale-[0.8] group-[.is-active-step]:grayscale-0"
                           />
                         </div>
 
@@ -1626,7 +1672,7 @@ const handleContentClick = (e: MouseEvent) => {
                       <!-- Text Info -->
                       <div class="text-center">
                         <h3
-                          class="text-xl md:text-2xl font-bold text-emerald-950 mb-1 group-hover:text-emerald-600 transition-colors duration-300"
+                          class="text-xl md:text-2xl font-bold mb-1 transition-colors duration-300 text-emerald-950 group-[.is-active-step]:text-emerald-600"
                         >
                           {{ member.name }}
                         </h3>
