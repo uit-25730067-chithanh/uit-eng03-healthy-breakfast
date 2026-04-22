@@ -79,8 +79,7 @@ watch(currentStep, (newStep) => {
 
 const isFullscreenMode = ref(false);
 const baseUrl = import.meta.env.BASE_URL;
-const IMAGE_BASE_URL =
-  "https://uit-25730067-chithanh.github.io/uit-eng03-healthy-breakfast/";
+const IMAGE_BASE_URL = baseUrl;
 
 // --- PRELOADING MECHANISM ---
 const preloadedImages = new Set<string>();
