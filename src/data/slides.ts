@@ -36,7 +36,7 @@ export const rawSlides: SlideData[] = [
   // SECTION 1: INTRODUCTION (Thanh Hải)
   {
     id: "intro-1",
-    title: "THE HEALTH IMPACTS OF SKIPPING BREAKFAST",
+    title: "THE IMPORTANCE OF HAVING A HEALTHY BREAKFAST",
     subtitle: "Group 4 - Class: ENG03.F22.CN1.TTNT",
     speaker: "Thanh Hải",
     content: [],
