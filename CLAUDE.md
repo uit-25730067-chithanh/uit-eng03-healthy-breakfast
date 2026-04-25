@@ -6,7 +6,7 @@ This file defines the technical and quality standards for the `uit-eng03-healthy
 
 - **Package Manager**: `pnpm` (REQUIRED)
 - **Local Server**: `pnpm dev`
-- **Build & Deploy**: `pnpm build` (Target: Vercel)
+- **Build & Deploy**: `pnpm build` (Target: GitHub Pages)
 - **Quality Check**: `pnpm lint` (TypeScript noEmit & ESLint)
 
 ## Agent Onboarding & Context Flow
