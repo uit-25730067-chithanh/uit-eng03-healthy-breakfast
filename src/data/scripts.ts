@@ -8,7 +8,7 @@ export const slideScripts: Record<string, string> = {
   "intro-4":
     "But before we dive into the details, I have a question for all of you: Is skipping breakfast just a time-saver or a hidden health-killer? [CLICK] We hope that after our talk, you will find the answer for yourself and gain a new perspective on your morning routine. [CLICK] To start our journey, let’s welcome Phước Thịnh. Thịnh, the virtual stage is yours! [CLICK]",
   "benefits-1":
-    "Good evening everyone, and thank you, Hai, for your clear introduction to our topic. [CLICK] Well, today I’m going to talk about the health benefits of having a healthy breakfast. [CLICK]",
+    "Good evening everyone, and thank you, Hai, for your clear introduction to our topic. [CLICK] Before I start, let me ask you a quick question: How many of you had breakfast this morning? (You can raise your hand or type 'yes' in the chat.) [CLICK] (Pause 2–3 seconds) Oh, nice! / Hmm, not many… that's interesting. [CLICK] Well, today I'm going to talk about the health benefits of having a healthy breakfast. [CLICK]",
   "benefits-2":
     "As you know, after a long night of sleep, our body feels tired and needs energy. [CLICK] A healthy breakfast helps us feel more awake and ready to start the day. [CLICK] Without it, we may feel weak or even a bit dizzy. [CLICK]",
   "benefits-3":
@@ -28,7 +28,7 @@ export const slideScripts: Record<string, string> = {
   "performance-2":
     "Quick question for everyone: Raise your hand if you skipped breakfast this morning? (Wait 5s). [CLICK] Wow, that’s a lot of 'unpowered systems' in this room! [CLICK] Today, I’ll show you why skipping that 'power supply' almost ruined my career. [CLICK]",
   "performance-3":
-    "A few years ago, I had a very important meeting with a foreign client. But, after a late party on Sunday, I woke up late. I just grabbed a coffee and rushed to the office. [CLICK] My brain felt like an old computer with only 2GB of RAM. [CLICK] I stared at my slides, but my mind was blank. [CLICK] It is essential that a developer eat breakfast. I learned this the hard way. [CLICK]",
+    "A few years ago, I had a very important meeting with a foreign client. But, after a late party on Sunday, I woke up late. I just grabbed a coffee and rushed to the office. [CLICK] My brain felt like an old computer with only 2GB of RAM. [CLICK] I stared at my slides, but my mind was blank. [CLICK] Because I didn't have enough glucose to fuel my brain, I looked like an amateur. In our English 3 class, we learned that: 'It is essential that a developer eat breakfast.' I learned this the hard way. It's not just grammar; it's a professional rule. [CLICK]",
   "performance-4":
     "Actually, some students think: 'I only sit and code, so I don't need much energy.' [CLICK] Research shows that the brain consumes 20% of your total energy. [CLICK] Mental work is a high-energy task for your system. [CLICK]",
   "performance-5":
